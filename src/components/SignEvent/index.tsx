@@ -15,6 +15,12 @@ interface Event {
   date: string;
   price: string;
   image: string;
+  fansignDate: string;
+  applicationPeriod: string;
+  availableSlots: number;
+  winnersAnnouncement: string;
+  nftPurchaseLimit: number;
+  currentParticipants: number;
 }
 
 interface BookingModalProps {
@@ -24,14 +30,23 @@ interface BookingModalProps {
 }
 
 const events: Event[] = [
-  { id: 1, title: 'ATEEZ FANSIGN EVENT', date: '241013 TAIPEI', price: '0.01 ETH', image: '/event-1.jpg' },
-  { id: 2, title: 'SVT FANSIGN EVENT', date: '241108 TAIPEI', price: '0.02 ETH', image: '/event-2.jpg' },
-  { id: 3, title: 'AESPA FANSIGN EVENT', date: '241110 TAIPEI', price: '0.03 ETH', image: '/event-3.jpg' },
-  // ... other events
+  { id: 1, title: '(G)I-DLE-MEET & CALL EVENT', date: '2024.10.06(SUN) 13:00 TAIPEI', price: '15 USDT', image: '/event-1.jpg', fansignDate: '2024.10.06 13:00-17:00', applicationPeriod: '2024.09.25 11:00 - 2024.10.01 23:59', availableSlots: 50, winnersAnnouncement: '2024.10.03 15:00', nftPurchaseLimit: 24, currentParticipants: 136 },
+  { id: 2, title: 'H1KEY PRE-ORDER MEET&CALL EVENT', date: '2024.10.19(SAT) 14:00 TAIPEI', price: '10 USDT', image: '/event-2.jpg', fansignDate: '2024.10.19 14:00-18:00', applicationPeriod: '2024.10.05 10:00 - 2024.10.12 23:59', availableSlots: 40, winnersAnnouncement: '2024.10.15 12:00', nftPurchaseLimit: 20, currentParticipants: 98 },
+  { id: 3, title: 'ZEROBASEONE FAN SIGN EVENT', date: '2024.10.27(SUN) 18:00 TAIPEI', price: '12 USDT', image: '/event-3.jpg', fansignDate: '2024.10.27 18:00-22:00', applicationPeriod: '2024.10.13 09:00 - 2024.10.20 23:59', availableSlots: 60, winnersAnnouncement: '2024.10.23 15:00', nftPurchaseLimit: 30, currentParticipants: 215 },
+  { id: 4, title: 'IVE ONLINE LUCKY DRAW EVENT', date: '2024.10.31 ~ 2024.11.07 23:59', price: '7 USDT', image: '/event-4.jpg', fansignDate: '2024.11.10 15:00-19:00', applicationPeriod: '2024.10.31 00:00 - 2024.11.07 23:59', availableSlots: 100, winnersAnnouncement: '2024.11.08 12:00', nftPurchaseLimit: 50, currentParticipants: 432 },
+  { id: 5, title: 'TWS LUCKY DRAW EVENT', date: '2024.11.06 ~ 2024.11.10 23:59', price: '5 USDT', image: '/event-5.jpg', fansignDate: '2024.11.15 19:00-21:00', applicationPeriod: '2024.11.06 10:00 - 2024.11.10 23:59', availableSlots: 80, winnersAnnouncement: '2024.11.12 15:00', nftPurchaseLimit: 40, currentParticipants: 267 },
+  { id: 6, title: 'ITZY LUCKY DRAW EVENT', date: '2024.11.26 14:00 ~ 2024.11.28 23:59', price: '5 USDT', image: '/event-6.jpg', fansignDate: '2024.12.01 14:00-18:00', applicationPeriod: '2024.11.26 14:00 - 2024.11.28 23:59', availableSlots: 70, winnersAnnouncement: '2024.11.29 18:00', nftPurchaseLimit: 35, currentParticipants: 189 },
 ];
 
 const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, event }) => {
   const [quantity, setQuantity] = useState(1);
+
+  // 計算總金額
+  const calculateTotalPrice = () => {
+    if (!event) return 0;
+    const priceValue = parseFloat(event.price.replace(' USDT', ''));
+    return (priceValue * quantity).toFixed(2);
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -44,14 +59,14 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, event }) =
             {event && <Image src={event.image} alt={event.title} width={400} height={400} className="rounded-lg w-full h-auto" />}
           </div>
           <div className="space-y-2 text-sm lg:text-base">
-            <p><span className="font-semibold">Fansign Date:</span> October 13, 2024 (Sun) 13:30-17:00</p>
-            <p><span className="font-semibold">Application Period:</span> October 2, 2024 11:00 - October 5, 2024 23:59</p>
-            <p><span className="font-semibold">Available Slots:</span> 50</p>
-            <p><span className="font-semibold">Winners Announcement:</span> October 7, 2024 15:00 (NFT viewable after announcement)</p>
-            <p><span className="font-semibold">NFT Purchase Limit:</span> 24</p>
+            <p><span className="font-semibold">Fansign Date:</span> {event?.fansignDate}</p>
+            <p><span className="font-semibold">Application Period:</span><br/> {event?.applicationPeriod}</p>
+            <p><span className="font-semibold">Available Slots:</span> {event?.availableSlots}</p>
+            <p><span className="font-semibold">Winners Announcement:</span> {event?.winnersAnnouncement}</p>
+            <p><span className="font-semibold">NFT Purchase Limit:</span> {event?.nftPurchaseLimit}</p>
             <div className="mt-4">
               <span className="font-bold">Current Participants: </span>
-              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">136</span>
+              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">{event?.currentParticipants}</span>
             </div>
           </div>
         </div>
@@ -61,10 +76,16 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, event }) =
             <div className="flex items-center border rounded">
               <button className="px-3 py-1" onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
               <input type="number" value={quantity} readOnly className="w-12 text-center" />
-              <button className="px-3 py-1" onClick={() => setQuantity(Math.min(24, quantity + 1))}>+</button>
+              <button className="px-3 py-1" onClick={() => setQuantity(Math.min(event?.nftPurchaseLimit || 24, quantity + 1))}>+</button>
             </div>
           </div>
-          <Button onClick={onClose} className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">Add to Cart</Button>
+          <div className="flex items-center space-x-4">
+            <div className="text-right">
+              <span className="font-bold">Total: </span>
+              <span className="text-lg text-blue-600">{calculateTotalPrice()} USDT</span>
+            </div>
+            <Button onClick={onClose} className="bg-blue-600 hover:bg-blue-700">Add to Cart</Button>
+          </div>
         </div>
         <div className="mt-6">
           <h3 className="font-bold mb-3 text-lg">Random NFT Preview</h3>
@@ -82,7 +103,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, event }) =
 const SignEvent: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
-  const handleBookNow = (event: Event) => {
+  const handleEventClick = (event: Event) => {
     setSelectedEvent(event);
   };
 
@@ -97,7 +118,11 @@ const SignEvent: React.FC = () => {
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
         {events.map((event) => (
-          <div key={event.id} className="group bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl">
+          <div 
+            key={event.id} 
+            className="group bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl cursor-pointer"
+            onClick={() => handleEventClick(event)}
+          >
             <div className="relative w-full" style={{ paddingTop: '75%' }}>
               <Image
                 src={event.image}
@@ -113,7 +138,10 @@ const SignEvent: React.FC = () => {
               <p className="text-sm sm:text-base text-gray-600 mb-2 font-medium">{event.date}</p>
               <div className="flex justify-between items-center">
                 <span className="text-sm sm:text-base text-blue-500 font-semibold">{event.price}</span>
-                <Button onClick={() => handleBookNow(event)}>Book Now</Button>
+                <Button onClick={(e) => {
+                  e.stopPropagation();
+                  handleEventClick(event);
+                }}>Book Now</Button>
               </div>
             </div>
           </div>
