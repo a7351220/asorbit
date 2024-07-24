@@ -1,15 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-
-const events = [
-  { id: 1, title: '(G)I-DLE-MEET & CALL EVENT', date: '2024.10.6(SUN) 1:00PM TAIPEI', price: '15 USDT' },
-  { id: 2, title: 'H1KEY PRE-ORDER MEET&CALL EVENT', date: '2024.10.19(SAT) 2:00PM TAIPEI', price: '10 USDT' },
-  { id: 3, title: 'ZEROBASEONE FAN SIGN EVENT', date: '2024.10.27(SUN) 6:00PM TAIPEI', price: '12 USDT' },
-  { id: 4, title: 'IVE ONLINE LUCKY DRAW EVENT', date: '2024.10.31 ~ 2024.11.07 23:59', price: '7 USDT' },
-  { id: 5, title: 'TWS LUCKY DRAW EVENT', date: '2024.11.06 ~ 2024.11.10 23:59', price: '5 USDT' },
-  { id: 6, title: 'ITZY LUCKY DRAW EVENT', date: '2024.11.26 14:00 ~ 2024.11.28 23:59', price: '5 USDT' },
-];
+import { events } from '@/data/event-data';
 
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -47,7 +39,7 @@ export default function Hero() {
                 <div className="relative h-full rounded-lg overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-b from-yellow-200/20 to-pink-300/20 mix-blend-overlay z-10"></div>
                   <Image
-                    src={`/event-${event.id}.jpg`}
+                    src={event.image}
                     alt={event.title}
                     layout="fill"
                     objectFit="cover"

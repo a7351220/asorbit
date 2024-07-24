@@ -8,35 +8,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-
-interface Event {
-  id: number;
-  title: string;
-  date: string;
-  price: string;
-  image: string;
-  fansignDate: string;
-  applicationPeriod: string;
-  availableSlots: number;
-  winnersAnnouncement: string;
-  nftPurchaseLimit: number;
-  currentParticipants: number;
-}
+import { events, Event } from '@/data/event-data';
 
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
   event: Event | null;
 }
-
-const events: Event[] = [
-  { id: 1, title: '(G)I-DLE-MEET & CALL EVENT', date: '2024.10.06(SUN) 13:00 TAIPEI', price: '15 USDT', image: '/event-1.jpg', fansignDate: '2024.10.06 13:00-17:00', applicationPeriod: '2024.09.25 11:00 - 2024.10.01 23:59', availableSlots: 50, winnersAnnouncement: '2024.10.03 15:00', nftPurchaseLimit: 24, currentParticipants: 136 },
-  { id: 2, title: 'H1KEY PRE-ORDER MEET&CALL EVENT', date: '2024.10.19(SAT) 14:00 TAIPEI', price: '10 USDT', image: '/event-2.jpg', fansignDate: '2024.10.19 14:00-18:00', applicationPeriod: '2024.10.05 10:00 - 2024.10.12 23:59', availableSlots: 40, winnersAnnouncement: '2024.10.15 12:00', nftPurchaseLimit: 20, currentParticipants: 98 },
-  { id: 3, title: 'ZEROBASEONE FAN SIGN EVENT', date: '2024.10.27(SUN) 18:00 TAIPEI', price: '12 USDT', image: '/event-3.jpg', fansignDate: '2024.10.27 18:00-22:00', applicationPeriod: '2024.10.13 09:00 - 2024.10.20 23:59', availableSlots: 60, winnersAnnouncement: '2024.10.23 15:00', nftPurchaseLimit: 30, currentParticipants: 215 },
-  { id: 4, title: 'IVE ONLINE LUCKY DRAW EVENT', date: '2024.10.31 ~ 2024.11.07 23:59', price: '7 USDT', image: '/event-4.jpg', fansignDate: '2024.11.10 15:00-19:00', applicationPeriod: '2024.10.31 00:00 - 2024.11.07 23:59', availableSlots: 100, winnersAnnouncement: '2024.11.08 12:00', nftPurchaseLimit: 50, currentParticipants: 432 },
-  { id: 5, title: 'TWS LUCKY DRAW EVENT', date: '2024.11.06 ~ 2024.11.10 23:59', price: '5 USDT', image: '/event-5.jpg', fansignDate: '2024.11.15 19:00-21:00', applicationPeriod: '2024.11.06 10:00 - 2024.11.10 23:59', availableSlots: 80, winnersAnnouncement: '2024.11.12 15:00', nftPurchaseLimit: 40, currentParticipants: 267 },
-  { id: 6, title: 'ITZY LUCKY DRAW EVENT', date: '2024.11.26 14:00 ~ 2024.11.28 23:59', price: '5 USDT', image: '/event-6.jpg', fansignDate: '2024.12.01 14:00-18:00', applicationPeriod: '2024.11.26 14:00 - 2024.11.28 23:59', availableSlots: 70, winnersAnnouncement: '2024.11.29 18:00', nftPurchaseLimit: 35, currentParticipants: 189 },
-];
 
 const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, event }) => {
   const [quantity, setQuantity] = useState(1);
@@ -46,6 +24,26 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, event }) =
     if (!event) return 0;
     const priceValue = parseFloat(event.price.replace(' USDT', ''));
     return (priceValue * quantity).toFixed(2);
+  };
+  //預覽NFT
+  const generateNFTPreviews = () => {
+    if (!event || !event.nftImages) return null;
+    
+    return event.nftImages.map((imageUrl, index) => (
+      <div key={index} className="relative w-full pb-[133.33%] bg-gray-200 rounded-xl overflow-hidden">
+        <Image
+          src={imageUrl}
+          alt={`NFT ${index + 1}`}
+          layout="fill"
+          objectFit="cover"
+        />
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 hover:bg-opacity-50 transition-opacity duration-300">
+          <span className="text-white text-xs opacity-0 hover:opacity-100 transition-opacity duration-300">
+            NFT {index + 1}
+          </span>
+        </div>
+      </div>
+    ));
   };
 
   return (
@@ -89,11 +87,9 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, event }) =
         </div>
         <div className="mt-6">
           <h3 className="font-bold mb-3 text-lg">Random NFT Preview</h3>
-          <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
-            {[...Array(8)].map((_, index) => (
-              <div key={index} className="w-12 h-12 bg-gray-200 rounded"></div>
-            ))}
-          </div>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-4">
+              {generateNFTPreviews()}
+            </div>
         </div>
       </DialogContent>
     </Dialog>
