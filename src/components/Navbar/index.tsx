@@ -21,7 +21,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
             <Link href="/my-nft" className="text-white hover:text-blue-200 text-sm lg:text-base">MY NFT</Link>
             <Link href="/nft-marketplace" className="text-white hover:text-blue-200 text-sm lg:text-base">NFT Marketplace</Link>
-            {/* <Link href="/中簽名單" className="text-white hover:text-blue-200 text-sm lg:text-base">中簽名單</Link> */}
+            { <Link href="/中簽名單" className="text-white hover:text-blue-200 text-sm lg:text-base">中簽名單</Link> }
           </div>
           <div className="flex items-center space-x-3 sm:space-x-4">
             {/* <Link href="/cart" className="text-white p-2">

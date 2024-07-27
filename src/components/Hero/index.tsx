@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { events } from '@/data/event-data';
 
+
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const totalSlides = Math.ceil(events.length / 2);
@@ -35,7 +36,7 @@ export default function Hero() {
         {Array.from({ length: totalSlides }).map((_, slideIndex) => (
           <div key={slideIndex} className="flex w-full h-full">
             {events.slice(slideIndex * 2, slideIndex * 2 + 2).map((event) => (
-              <div key={event.id} className="w-1/2 h-full p-2">
+              <div key={event.id} className="w-1/2 h-full p-2" >
                 <div className="relative h-full rounded-lg overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-b from-yellow-200/20 to-pink-300/20 mix-blend-overlay z-10"></div>
                   <Image
