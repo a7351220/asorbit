@@ -41,7 +41,7 @@ export const nfts: NFT[] = [
     image: '/nft-images/1.jpg',
     rarity: 'Rare',
     description: "Limited edition Mingyu NFT from SEVENTEEN's latest comeback.",
-    currentOwner: '0x1234...5678',
+    currentOwner: '0x1234567890123456789012345678901234567890',
     listingDate: '2024-07-01',
     expirationDate: '2024-10-01'
   },
@@ -53,7 +53,7 @@ export const nfts: NFT[] = [
     image: '/nft-images/2.jpg',
     rarity: 'Epic',
     description: 'Exclusive Wonyoung NFT featuring her iconic smile.',
-    currentOwner: '0x8765...4321',
+    currentOwner: '0xabcdef1234567890abcdef1234567890abcdef12',
     listingDate: '2024-07-15',
     expirationDate: '2024-10-15'
   },
@@ -65,7 +65,7 @@ export const nfts: NFT[] = [
     image: '/nft-images/3.jpg',
     rarity: 'Legendary',
     description: "One-of-a-kind V NFT from BTS's world tour.",
-    currentOwner: '0x2468...1357',
+    currentOwner: '0x9876543210fedcba9876543210fedcba98765432',
     listingDate: '2024-08-01',
     expirationDate: '2024-11-01'
   },
@@ -77,7 +77,7 @@ export const nfts: NFT[] = [
     image: '/nft-images/4.png',
     rarity: 'Common',
     description: "Winter NFT from Aespa's latest virtual reality concert.",
-    currentOwner: '0x1357...2468',
+    currentOwner: '0xfedcba9876543210fedcba9876543210fedcba98',
     listingDate: '2024-08-15',
     expirationDate: '2024-11-15'
   },
@@ -89,7 +89,7 @@ export const nfts: NFT[] = [
     image: '/nft-images/5.jpg',
     rarity: 'Uncommon',
     description: 'DK NFT showcasing his powerful vocals.',
-    currentOwner: '0x9876...5432',
+    currentOwner: '0x0123456789abcdef0123456789abcdef01234567',
     listingDate: '2024-09-01',
     expirationDate: '2024-12-01'
   },
@@ -101,7 +101,7 @@ export const nfts: NFT[] = [
     image: '/nft-images/6.jpg',
     rarity: 'Rare',
     description: "Shuhua NFT featuring her stunning visuals from (G)I-dle's recent photoshoot.",
-    currentOwner: '0x5678...9012',
+    currentOwner: '0xa1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2',
     listingDate: '2024-09-15',
     expirationDate: '2024-12-15'
   },
@@ -113,7 +113,7 @@ export const nfts: NFT[] = [
     image: '/nft-images/7.jpg',
     rarity: 'Epic',
     description: "Limited edition Kim Chaewon NFT from LE SSERAFIM's debut anniversary celebration.",
-    currentOwner: '0x3456...7890',
+    currentOwner: '0xb2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3',
     listingDate: '2024-07-05',
     expirationDate: '2024-10-05'
   },
@@ -125,7 +125,7 @@ export const nfts: NFT[] = [
     image: '/nft-images/8.jpg',
     rarity: 'Uncommon',
     description: "ENHYPEN Jake NFT showcasing his charismatic stage presence.",
-    currentOwner: '0x7890...1234',
+    currentOwner: '0xc3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4',
     listingDate: '2024-07-20',
     expirationDate: '2024-10-20'
   },
@@ -137,7 +137,7 @@ export const nfts: NFT[] = [
     image: '/nft-images/9.jpg',
     rarity: 'Rare',
     description: "Wonwoo NFT featuring his iconic glasses look from SEVENTEEN's latest concert.",
-    currentOwner: '0x2345...6789',
+    currentOwner: '0xd4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5',
     listingDate: '2024-08-05',
     expirationDate: '2024-11-05'
   },
@@ -149,7 +149,7 @@ export const nfts: NFT[] = [
     image: '/nft-images/10.jpg',
     rarity: 'Legendary',
     description: "Exclusive Jisoo NFT from Blackpink's world tour finale.",
-    currentOwner: '0x6789...0123',
+    currentOwner: '0xe5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6',
     listingDate: '2024-08-20',
     expirationDate: '2024-11-20'
   },
@@ -161,7 +161,7 @@ export const nfts: NFT[] = [
     image: '/nft-images/11.jpg',
     rarity: 'Epic',
     description: "Exclusive Wonpil NFT featuring his soulful piano performance from Day6's latest concert.",
-    currentOwner: '0x8901...2345',
+    currentOwner: '0xf6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1',
     listingDate: '2024-09-05',
     expirationDate: '2024-12-05'
   },
@@ -173,7 +173,7 @@ export const nfts: NFT[] = [
     image: '/nft-images/12.jpg',
     rarity: 'Legendary',
     description: "Limited edition Cha Eunwoo NFT showcasing his visual perfection from Astro's summer photoshoot.",
-    currentOwner: '0x3456...7890',
+    currentOwner: '0x1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b',
     listingDate: '2024-09-20',
     expirationDate: '2024-12-20'
   },
@@ -185,7 +185,7 @@ export const nfts: NFT[] = [
     image: '/nft-images/13.jpg',
     rarity: 'Rare',
     description: "Wooyoung NFT capturing his dynamic dance moves from Ateez's world tour.",
-    currentOwner: '0x9012...3456',
+    currentOwner: '0x2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c',
     listingDate: '2024-07-10',
     expirationDate: '2024-10-10'
   },
@@ -197,7 +197,7 @@ export const nfts: NFT[] = [
     image: '/nft-images/14.jpg',
     rarity: 'Legendary',
     description: "Iconic Yoona NFT celebrating Girls' Generation's lasting influence in K-pop.",
-    currentOwner: '0x5678...9012',
+    currentOwner: '0x3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d',
     listingDate: '2024-07-25',
     expirationDate: '2024-10-25'
   },
@@ -209,7 +209,7 @@ export const nfts: NFT[] = [
     image: '/nft-images/15.jpg',
     rarity: 'Epic',
     description: "Ryujin NFT featuring her charismatic stage presence from ITZY's latest comeback.",
-    currentOwner: '0x1234...5678',
+    currentOwner: '0x4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e',
     listingDate: '2024-08-10',
     expirationDate: '2024-11-10'
   },
@@ -221,7 +221,7 @@ export const nfts: NFT[] = [
     image: '/nft-images/16.jpg',
     rarity: 'Epic',
     description: "Ahn Yujin NFT showcasing her elegant visuals from IVE's recent magazine cover shoot.",
-    currentOwner: '0x7890...1234',
+    currentOwner: '0x5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f',
     listingDate: '2024-08-25',
     expirationDate: '2024-11-25'
   },
@@ -233,7 +233,7 @@ export const nfts: NFT[] = [
     image: '/nft-images/17.jpg',
     rarity: 'Rare',
     description: "Wheein NFT capturing her powerful vocals from MAMAMOO's special anniversary concert.",
-    currentOwner: '0x2345...6789',
+    currentOwner: '0x6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a',
     listingDate: '2024-09-10',
     expirationDate: '2024-12-10'
   },
@@ -245,7 +245,7 @@ export const nfts: NFT[] = [
     image: '/nft-images/18.jpg',
     rarity: 'Epic',
     description: "Soobin NFT featuring his trendsetting fashion from TXT's latest music video.",
-    currentOwner: '0x8901...2345',
+    currentOwner: '0x7a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b',
     listingDate: '2024-09-25',
     expirationDate: '2024-12-25'
   },
@@ -257,7 +257,7 @@ export const nfts: NFT[] = [
     image: '/nft-images/19.jpg',
     rarity: 'Legendary',
     description: "Minho NFT showcasing his charismatic performance from SHINee's 15th anniversary concert.",
-    currentOwner: '0x4567...8901',
+    currentOwner: '0x8b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c',
     listingDate: '2024-07-30',
     expirationDate: '2024-10-30'
   },
@@ -269,7 +269,7 @@ export const nfts: NFT[] = [
     image: '/nft-images/20.jpg',
     rarity: 'Uncommon',
     description: "Shinyu NFT featuring his debut performance with TWS, capturing the start of a promising career.",
-    currentOwner: '0x0123...4567',
+    currentOwner: '0x9c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d',
     listingDate: '2024-08-15',
     expirationDate: '2024-11-15'
   },
