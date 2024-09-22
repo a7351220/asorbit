@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { FaSearch } from 'react-icons/fa';
 import Navbar from '@/components/Navbar';
-import { groups, nfts, NFT } from '@/data/nft-data';
+import { groups, getMarketplaceNFTs, NFT } from '@/data/nft-data';
 import NFTGroupLogo from '@/components/NFTGroupLogo';
 import NFTmarketModal from '@/components/NFTmarketModal';
 
@@ -57,7 +57,7 @@ export default function NFTMarketplace() {
   };
 
   const filteredAndSortedNFTs = useMemo(() => {
-    let filtered = nfts.filter((nft) => {
+    let filtered = getMarketplaceNFTs().filter((nft) => {
       const matchesCategory = 
         selectedCategory === 'HOT' || 
         (selectedCategory === 'NEW') ||
@@ -83,8 +83,8 @@ export default function NFTMarketplace() {
     }
 
     return filtered;
-  }, [nfts, selectedCategory, searchName, searchGroup, selectedGroups, minPrice, maxPrice, priceSort]);
-
+  }, [selectedCategory, searchName, searchGroup, selectedGroups, minPrice, maxPrice, priceSort]);
+  
   const handleNFTClick = (nft: NFT) => {
     setSelectedNFT(nft);
     setIsModalOpen(true);
@@ -144,7 +144,7 @@ export default function NFTMarketplace() {
                 />
                 <FaSearch className="absolute right-3 top-3 text-gray-400" />
               </div>
-              <div className="h-90 overflow-y-auto">
+              <div className="h-85 overflow-y-auto">
                 {filteredGroups.map((group) => (
                   <div key={group} className="flex items-center mb-2">
                     <input 
