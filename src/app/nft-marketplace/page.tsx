@@ -75,7 +75,7 @@ export default function NFTMarketplace() {
     });
 
     if (selectedCategory === 'NEW') {
-      filtered.sort((a, b) => new Date(b.listingDate).getTime() - new Date(a.listingDate).getTime());
+      filtered.sort((a, b) => new Date(b.listingDate || '').getTime() - new Date(a.listingDate || '').getTime());
     } else if (priceSort === 'high-to-low') {
       filtered.sort((a, b) => parseFloat(b.price.split(' ')[0]) - parseFloat(a.price.split(' ')[0]));
     } else if (priceSort === 'low-to-high') {

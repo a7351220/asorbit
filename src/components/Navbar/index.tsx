@@ -23,11 +23,11 @@ export default function Navbar() {
             <Link href="/winning-list" className="text-white hover:text-blue-200 text-sm lg:text-base">Winning List</Link>
             <Link href="/my-nft" className="text-white hover:text-blue-200 text-sm lg:text-base">MY NFT</Link>
           </div>
-          <div className="flex items-center space-x-3 sm:space-x-4">
-            <button className="bg-white text-blue-900 px-3 py-2 rounded hover:bg-blue-100 text-sm sm:text-base">
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            <button className="bg-white text-blue-900 px-2 py-1 sm:px-3 sm:py-2 rounded hover:bg-blue-100 text-xs sm:text-sm">
               Connect Wallet
             </button>
-            <Link href="/register-did" className="bg-blue-300 text-blue-900 px-3 py-2 rounded hover:bg-blue-400 text-sm sm:text-base">
+            <Link href="/register-did" className="bg-blue-300 text-blue-900 px-2 py-1 sm:px-3 sm:py-2 rounded hover:bg-blue-400 text-xs sm:text-sm">
               Register DID
             </Link>
           </div>
@@ -41,10 +41,10 @@ export default function Navbar() {
             <Link href="/my-nft" className="block text-white hover:text-blue-200 py-2">MY NFT</Link>
             <Link href="/nft-marketplace" className="block text-white hover:text-blue-200 py-2">NFT Marketplace</Link>
             <Link href="/winning-list" className="block text-white hover:text-blue-200 py-2">Winning List</Link>
-            <button className="block w-full text-left bg-white text-blue-900 px-3 py-2 rounded hover:bg-blue-100 text-sm sm:text-base mt-2">
+            <button className="block w-full text-left bg-white text-blue-900 px-2 py-1 rounded hover:bg-blue-100 text-xs mt-2">
               Connect Wallet
             </button>
-            <Link href="/register-did" className="block w-full text-left bg-blue-300 text-blue-900 px-3 py-2 rounded hover:bg-blue-400 text-sm sm:text-base mt-2">
+            <Link href="/register-did" className="block w-full text-left bg-blue-300 text-blue-900 px-2 py-1 rounded hover:bg-blue-400 text-xs mt-2">
               Register DID
             </Link>
           </div>
