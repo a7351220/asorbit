@@ -1,83 +1,455 @@
-// src/data/nft-data.ts
-
 export interface NFT {
-    id: number;
-    name: string;
-    group: string;
-    price: string;
-    image: string;
-    rarity: string;
-    releaseDate: string;
-    description: string;
-    totalSupply: number;
-    currentOwner: string;
+  id: number;
+  name: string;
+  group: string;
+  price: string;
+  image: string;
+  rarity: 'Common' | 'Uncommon' | 'Rare' | 'Epic' | 'Legendary';
+  description?: string;
+  currentOwner: string;
+  listingDate?: string;
+  expirationDate?: string;
+  status?: 'on_market' | 'owned' | 'redeemed';
+  tokenId?: string;
+  purchaseDate?: string;
+}
+
+export const groups: string[] = [
+  'AB6IX', 'Aespa', 'Apink', 'Astro', 'Ateez',
+  'Blackpink', 'BOYNEXTDOOR', 'BTOB', 'BTS',
+  'Cravity', 'Day6', 'Dreamcatcher',
+  'ENHYPEN', 'EXID', 'Exo',
+  'Fromis 9', '(G)I-dle', "Girls' Generation", 'GOT7',
+  'H1-KEY', 'iKON', 'ILLIT', 'ITZY', 'IVE',
+  'Kep1er', 'KISS OF LIFE',
+  'LE SSERAFIM', 'LUCY',
+  'MAMAMOO', 'MONSTA X',
+  'N.Flying', 'NCT', 'NewJeans', 'NMIXX',
+  'Oh My Girl',
+  'Pentagon',
+  'Red Velvet', 'RIIZE',
+  'SEVENTEEN', 'SHINee', 'STAYC', 'Stray Kids', 'Super Junior',
+  'THE BOYZ', 'tripleS', 'TWICE', 'TXT', 'TWS',
+  'VIVIZ',
+  'Weeekly', 'WINNER', 'WJSN', 'woo!ah!',
+  'XG'
+];
+
+export const nfts: NFT[] = [
+  { 
+    id: 1, 
+    name: 'mingyu', 
+    group: 'SEVENTEEN', 
+    price: '0.14 ETH', 
+    image: '/nft-images/1.jpg',
+    rarity: 'Rare',
+    description: "Limited edition Mingyu NFT from SEVENTEEN's latest comeback.",
+    currentOwner: '0x1234567890123456789012345678901234567890',
+    listingDate: '2024-07-01',
+    expirationDate: '2024-10-01',
+    status: 'on_market',
+    tokenId: '4367'
+  },
+  { 
+    id: 2, 
+    name: 'wonyoung', 
+    group: 'IVE', 
+    price: '0.11 ETH', 
+    image: '/nft-images/2.jpg',
+    rarity: 'Epic',
+    description: 'Exclusive Wonyoung NFT featuring her iconic smile.',
+    currentOwner: '0xabcdef1234567890abcdef1234567890abcdef12',
+    listingDate: '2024-07-15',
+    expirationDate: '2024-10-15',
+    status: 'on_market',
+    tokenId: '9021'
+  },
+  { 
+    id: 3, 
+    name: 'V', 
+    group: 'BTS', 
+    price: '0.21 ETH', 
+    image: '/nft-images/3.jpg',
+    rarity: 'Legendary',
+    description: "One-of-a-kind V NFT from BTS's world tour.",
+    currentOwner: '0x9876543210fedcba9876543210fedcba98765432',
+    listingDate: '2024-08-01',
+    expirationDate: '2024-11-01',
+    status: 'on_market',
+    tokenId: '5693'
+  },
+  { 
+    id: 4, 
+    name: 'winter', 
+    group: 'Aespa', 
+    price: '0.07 ETH', 
+    image: '/nft-images/4.png',
+    rarity: 'Common',
+    description: "Winter NFT from Aespa's latest virtual reality concert.",
+    currentOwner: '0xfedcba9876543210fedcba9876543210fedcba98',
+    listingDate: '2024-08-15',
+    expirationDate: '2024-11-15',
+    status: 'on_market',
+    tokenId: '2470'
+  },
+  { 
+    id: 5, 
+    name: 'DK', 
+    group: 'SEVENTEEN', 
+    price: '0.06 ETH', 
+    image: '/nft-images/5.jpg',
+    rarity: 'Uncommon',
+    description: 'DK NFT showcasing his powerful vocals.',
+    currentOwner: '0x0123456789abcdef0123456789abcdef01234567',
+    listingDate: '2024-09-01',
+    expirationDate: '2024-12-01',
+    status: 'on_market',
+    tokenId: '8156'
+  },
+  { 
+    id: 6, 
+    name: 'shuhua', 
+    group: '(G)I-dle', 
+    price: '0.09 ETH', 
+    image: '/nft-images/6.jpg',
+    rarity: 'Rare',
+    description: "Shuhua NFT featuring her stunning visuals from (G)I-dle's recent photoshoot.",
+    currentOwner: '0xa1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2',
+    listingDate: '2024-09-15',
+    expirationDate: '2024-12-15',
+    status: 'on_market',
+    tokenId: '3902'
+  },
+  { 
+    id: 7, 
+    name: 'chaewon', 
+    group: 'LE SSERAFIM', 
+    price: '0.13 ETH', 
+    image: '/nft-images/7.jpg',
+    rarity: 'Epic',
+    description: "Limited edition Kim Chaewon NFT from LE SSERAFIM's debut anniversary celebration.",
+    currentOwner: '0xb2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3',
+    listingDate: '2024-07-05',
+    expirationDate: '2024-10-05',
+    status: 'on_market',
+    tokenId: '6749'
+  },
+  { 
+    id: 8, 
+    name: 'jake', 
+    group: 'ENHYPEN', 
+    price: '0.08 ETH', 
+    image: '/nft-images/8.jpg',
+    rarity: 'Uncommon',
+    description: "ENHYPEN Jake NFT showcasing his charismatic stage presence.",
+    currentOwner: '0xc3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4',
+    listingDate: '2024-07-20',
+    expirationDate: '2024-10-20',
+    status: 'on_market',
+    tokenId: '1385'
+  },
+  { 
+    id: 9, 
+    name: 'wonwoo', 
+    group: 'SEVENTEEN', 
+    price: '0.10 ETH', 
+    image: '/nft-images/9.jpg',
+    rarity: 'Rare',
+    description: "Wonwoo NFT featuring his iconic glasses look from SEVENTEEN's latest concert.",
+    currentOwner: '0xd4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5',
+    listingDate: '2024-08-05',
+    expirationDate: '2024-11-05',
+    status: 'on_market',
+    tokenId: '7092'
+  },
+  { 
+    id: 10, 
+    name: 'jisoo', 
+    group: 'Blackpink', 
+    price: '0.18 ETH', 
+    image: '/nft-images/10.jpg',
+    rarity: 'Legendary',
+    description: "Exclusive Jisoo NFT from Blackpink's world tour finale.",
+    currentOwner: '0xe5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6',
+    listingDate: '2024-08-20',
+    expirationDate: '2024-11-20',
+    status: 'on_market',
+    tokenId: '4518'
+  },
+  { 
+    id: 11, 
+    name: 'wonpil', 
+    group: 'Day6', 
+    price: '0.12 ETH', 
+    image: '/nft-images/11.jpg',
+    rarity: 'Epic',
+    description: "Exclusive Wonpil NFT featuring his soulful piano performance from Day6's latest concert.",
+    currentOwner: '0xf6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1',
+    listingDate: '2024-09-05',
+    expirationDate: '2024-12-05',
+    status: 'on_market',
+    tokenId: '9260'
+  },
+  { 
+    id: 12, 
+    name: 'cha eunwoo', 
+    group: 'Astro', 
+    price: '0.15 ETH', 
+    image: '/nft-images/12.jpg',
+    rarity: 'Legendary',
+    description: "Limited edition Cha Eunwoo NFT showcasing his visual perfection from Astro's summer photoshoot.",
+    currentOwner: '0x1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b',
+    listingDate: '2024-09-20',
+    expirationDate: '2024-12-20',
+    status: 'on_market',
+    tokenId: '5837'
+  },
+  { 
+    id: 13, 
+    name: 'wooyoung', 
+    group: 'Ateez', 
+    price: '0.09 ETH', 
+    image: '/nft-images/13.jpg',
+    rarity: 'Rare',
+    description: "Wooyoung NFT capturing his dynamic dance moves from Ateez's world tour.",
+    currentOwner: '0x2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c',
+    listingDate: '2024-07-10',
+    expirationDate: '2024-10-10',
+    status: 'on_market',
+    tokenId: '6104'
+  },
+  { 
+    id: 14, 
+    name: 'yoona', 
+    group: "Girls' Generation", 
+    price: '0.17 ETH', 
+    image: '/nft-images/14.jpg',
+    rarity: 'Legendary',
+    description: "Iconic Yoona NFT celebrating Girls' Generation's lasting influence in K-pop.",
+    currentOwner: '0x3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d',
+    listingDate: '2024-07-25',
+    expirationDate: '2024-10-25',
+    status: 'on_market',
+    tokenId: '2731'
+  },
+  { 
+    id: 15, 
+    name: 'ryujin', 
+    group: 'ITZY', 
+    price: '0.11 ETH', 
+    image: '/nft-images/15.jpg',
+    rarity: 'Epic',
+    description: "Ryujin NFT featuring her charismatic stage presence from ITZY's latest comeback.",
+    currentOwner: '0x4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e',
+    listingDate: '2024-08-10',
+    expirationDate: '2024-11-10',
+    status: 'on_market',
+    tokenId: '8945'
+  },
+  { 
+    id: 16, 
+    name: 'yujin', 
+    group: 'IVE', 
+    price: '0.13 ETH', 
+    image: '/nft-images/16.jpg',
+    rarity: 'Epic',
+    description: "Ahn Yujin NFT showcasing her elegant visuals from IVE's recent magazine cover shoot.",
+    currentOwner: '0x5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f',
+    listingDate: '2024-08-25',
+    expirationDate: '2024-11-25',
+    status: 'on_market',
+    tokenId: '3416'
+  },
+  { 
+    id: 17, 
+    name: 'wheein', 
+    group: 'MAMAMOO', 
+    price: '0.14 ETH', 
+    image: '/nft-images/17.jpg',
+    rarity: 'Rare',
+    description: "Wheein NFT capturing her powerful vocals from MAMAMOO's special anniversary concert.",
+    currentOwner: '0x6f1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d5e6f1a',
+    listingDate: '2024-09-10',
+    expirationDate: '2024-12-10',
+    status: 'on_market',
+    tokenId: '9078'
+  },
+  { 
+    id: 18, 
+    name: 'soobin', 
+    group: 'TXT', 
+    price: '0.12 ETH', 
+    image: '/nft-images/18.jpg',
+    rarity: 'Epic',
+    description: "Soobin NFT featuring his trendsetting fashion from TXT's latest music video.",
+    currentOwner: '0x7a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b',
+    listingDate: '2024-09-25',
+    expirationDate: '2024-12-25',
+    status: 'on_market',
+    tokenId: '1652'
+  },
+  { 
+    id: 19, 
+    name: 'minho', 
+    group: 'SHINee', 
+    price: '0.16 ETH', 
+    image: '/nft-images/19.jpg',
+    rarity: 'Legendary',
+    description: "Minho NFT showcasing his charismatic performance from SHINee's 15th anniversary concert.",
+    currentOwner: '0x8b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c',
+    listingDate: '2024-07-30',
+    expirationDate: '2024-10-30',
+    status: 'on_market',
+    tokenId: '7403'
+  },
+  { 
+    id: 20, 
+    name: 'shinyu', 
+    group: 'TWS', 
+    price: '0.08 ETH', 
+    image: '/nft-images/20.jpg',
+    rarity: 'Uncommon',
+    description: "Shinyu NFT featuring his debut performance with TWS, capturing the start of a promising career.",
+    currentOwner: '0x9c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d',
+    listingDate: '2024-08-15',
+    expirationDate: '2024-11-15',
+    status: 'on_market',
+    tokenId: '5289',
+  },
+  {
+    id: 21,
+    name: 'S.Coups',
+    group: 'SEVENTEEN',
+    price: '0.18 ETH',
+    image: '/nft-images/21.jpg',
+    rarity: 'Epic',
+    description: "Exclusive S.Coups NFT featuring a highlight from SEVENTEEN's world tour.",
+    currentOwner: '0x9876543210987654321098765432109876543210',
+    status: 'owned',
+    tokenId: '8721',
+    purchaseDate: '2024-08-15'
+  },
+  {
+    id: 22,
+    name: 'Eunseo',
+    group: 'WJSN',
+    price: '0.12 ETH',
+    image: '/nft-images/22.jpg',
+    rarity: 'Uncommon',
+    description: "WJSN's Eunseo special moment captured in this unique NFT.",
+    currentOwner: '0x1111222233334444555566667777888899990000',
+    status: 'redeemed',
+    tokenId: '5622',
+    purchaseDate: '2024-09-03'
+  },
+  {
+    id: 23,
+    name: 'Bona',
+    group: 'WJSN',
+    price: '0.15 ETH',
+    image: '/nft-images/23.jpg',
+    rarity: 'Rare',
+    description: "Bona's standout performance immortalized in this collectible NFT.",
+    currentOwner: '0xaaaabbbbccccddddeeeeffffgggghhhhiiiijjjj',
+    status: 'owned',
+    tokenId: '7823',
+    purchaseDate: '2024-07-22'
+  },
+  {
+    id: 24,
+    name: 'EXY',
+    group: 'WJSN',
+    price: '0.11 ETH',
+    image: '/nft-images/24.jpg',
+    rarity: 'Common',
+    description: "EXY's charismatic charm captured in this WJSN NFT collection.",
+    currentOwner: '0x2468135790246813579024681357902468135790',
+    status: 'owned',
+    tokenId: '3324',
+    purchaseDate: '2024-10-05'
+  },
+  {
+    id: 25,
+    name: 'Seola',
+    group: 'WJSN',
+    price: '0.13 ETH',
+    image: '/nft-images/25.jpg',
+    rarity: 'Uncommon',
+    description: "Xuan Yi's elegance shines through in this limited edition NFT.",
+    currentOwner: '0x1357924680135792468013579246801357924680',
+    status: 'owned',
+    tokenId: '6525',
+    purchaseDate: '2024-11-11'
+  },
+  {
+    id: 26,
+    name: 'Seola',
+    group: 'WJSN',
+    price: '0.17 ETH',
+    image: '/nft-images/26.jpg',
+    rarity: 'Epic',
+    description: "Collector's item featuring Xuan Yi's most iconic stage outfit.",
+    currentOwner: '0x0123456789abcdef0123456789abcdef01234567',
+    status: 'owned',
+    tokenId: '9126',
+    purchaseDate: '2024-12-24'
+  },
+  {
+    id: 27,
+    name: 'Hoshi',
+    group: 'SEVENTEEN',
+    price: '0.16 ETH',
+    image: '/nft-images/27.jpg',
+    rarity: 'Rare',
+    description: "Hoshi's dynamic dance move frozen in time with this NFT.",
+    currentOwner: '0xfedcba9876543210fedcba9876543210fedcba98',
+    status: 'owned',
+    tokenId: '7727',
+    purchaseDate: '2025-01-07'
+  },
+  {
+    id: 28,
+    name: 'Hoshi',
+    group: 'SEVENTEEN',
+    price: '0.19 ETH',
+    image: '/nft-images/28.jpg',
+    rarity: 'Legendary',
+    description: "Once-in-a-lifetime Hoshi NFT commemorating SEVENTEEN's anniversary.",
+    currentOwner: '0x13579ace02468bdf13579ace02468bdf13579ace',
+    status: 'redeemed',
+    tokenId: '1028',
+    purchaseDate: '2025-02-14'
+  },
+  {
+    id: 29,
+    name: 'Wonwoo',
+    group: 'SEVENTEEN',
+    price: '0.14 ETH',
+    image: '/nft-images/29.jpg',
+    rarity: 'Rare',
+    description: "Wonwoo's charismatic gaze captured in this sought-after NFT.",
+    currentOwner: '0x24680135792468013579246801357924680135792',
+    status: 'owned',
+    tokenId: '5929',
+    purchaseDate: '2025-03-21'
+  },
+  {
+    id: 30,
+    name: 'EXY',
+    group: 'WJSN',
+    price: '0.20 ETH',
+    image: '/nft-images/30.jpg',
+    rarity: 'Legendary',
+    description: "EXY's solo project celebration encapsulated in this exclusive NFT.",
+    currentOwner: '0xabcdef0123456789abcdef0123456789abcdef01',
+    status: 'owned',
+    tokenId: '3030',
+    purchaseDate: '2025-04-30'
   }
-  
-  export const groups: string[] = [
-    'Aespa', 'AB6IX', 'Apink', 'Astro', 'Ateez', 'Blackpink', 
-    'BOYNEXTDOOR', 'BTOB', 'BTS', 'Cravity', 'Day6', 'EXID', 
-    'Exo', 'Fromis 9', '(G)I-dle', 'SEVENTEEN', 'IVE'
-  ];
-  
-  export const nfts: NFT[] = [
-    { 
-      id: 1, 
-      name: 'mingyu', 
-      group: 'SEVENTEEN', 
-      price: '0.14 ETH', 
-      image: '/nft-images/mingyu.jpg',
-      rarity: 'Rare',
-      releaseDate: '2023-05-15',
-      description: "Limited edition Mingyu NFT from SEVENTEEN's latest comeback.",
-      totalSupply: 100,
-      currentOwner: '0x1234...5678'
-    },
-    { 
-      id: 2, 
-      name: 'wonyoung', 
-      group: 'IVE', 
-      price: '0.11 ETH', 
-      image: '/nft-images/wonyoung.jpg',
-      rarity: 'Epic',
-      releaseDate: '2023-06-01',
-      description: 'Exclusive Wonyoung NFT featuring her iconic smile.',
-      totalSupply: 50,
-      currentOwner: '0x8765...4321'
-    },
-    { 
-      id: 3, 
-      name: 'V', 
-      group: 'BTS', 
-      price: '0.21 ETH', 
-      image: '/nft-images/v.jpg',
-      rarity: 'Legendary',
-      releaseDate: '2023-04-20',
-      description: "One-of-a-kind V NFT from BTS's world tour.",
-      totalSupply: 10,
-      currentOwner: '0x2468...1357'
-    },
-    { 
-      id: 4, 
-      name: 'winter', 
-      group: 'Aespa', 
-      price: '0.07 ETH', 
-      image: '/nft-images/winter.png',
-      rarity: 'Common',
-      releaseDate: '2023-07-01',
-      description: "Winter NFT from Aespa's latest virtual reality concert.",
-      totalSupply: 500,
-      currentOwner: '0x1357...2468'
-    },
-    { 
-      id: 5, 
-      name: 'DK', 
-      group: 'SEVENTEEN', 
-      price: '0.06 ETH', 
-      image: '/nft-images/dk.jpg',
-      rarity: 'Uncommon',
-      releaseDate: '2023-05-20',
-      description: 'DK NFT showcasing his powerful vocals.',
-      totalSupply: 200,
-      currentOwner: '0x9876...5432'
-    },
-  ];
+];
+
+export const getNFTsByStatus = (status: 'on_market' | 'owned' | 'redeemed') => 
+  nfts.filter(nft => nft.status === status);
+
+export const getMarketplaceNFTs = () => getNFTsByStatus('on_market');
+export const getMyNFTs = () => nfts.filter(nft => nft.status === 'owned' || nft.status === 'redeemed');
