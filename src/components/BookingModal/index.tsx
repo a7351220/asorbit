@@ -12,6 +12,7 @@ import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { nftSaleContractConfig } from '@/app/contracts'; 
 import { BaseError } from 'viem';
 import { useNFTContractData } from '@/hooks/useNFTContractData';
+import { Event } from '@/data/event-data'; // 添加這個導入
 
 interface ContractEvent {
   id: number;
@@ -25,7 +26,7 @@ interface ContractEvent {
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
-  event: ContractEvent | null;
+  event: Event | null;
   nftInfo: ReturnType<typeof useNFTContractData>;
 }
 

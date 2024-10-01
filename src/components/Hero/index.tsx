@@ -4,10 +4,12 @@ import Image from 'next/image';
 import { events, Event } from '@/data/event-data';
 import BookingModal from '@/components/BookingModal';
 import { getEventStatus } from '@/lib/event-status';
+import { useNFTContractData } from '@/hooks/useNFTContractData';
 
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const nftInfo = useNFTContractData();
 
   const activeEvents = useMemo(() => {
     return events.filter(event => {
@@ -125,6 +127,7 @@ export default function Hero() {
         isOpen={!!selectedEvent}
         onClose={handleCloseModal}
         event={selectedEvent}
+        nftInfo={nftInfo}
       />
     </section>
   );
