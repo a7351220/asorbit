@@ -2,10 +2,10 @@ import { Event } from '@/data/event-data';
 
 export function getEventStatus(event: Event): 'upcoming' | 'ongoing' | 'ended' | 'completed' | 'announced' {
   const now = new Date();
-  const applicationStart = new Date(event.applicationPeriod.split(' - ')[0]);
-  const applicationEnd = new Date(event.applicationPeriod.split(' - ')[1]);
-  const winnersAnnouncement = new Date(event.winnersAnnouncement);
-  const eventDate = new Date(event.date.split(' ')[0]);
+  const applicationStart = new Date(event.applicationPeriod?.split(' - ')[0] || '');
+  const applicationEnd = new Date(event.applicationPeriod?.split(' - ')[1] || '');
+  const winnersAnnouncement = new Date(event.winnersAnnouncement || '');
+  const eventDate = new Date(event.date?.split(' ')[0] || '' );
 
   if (now < applicationStart) {
     return 'upcoming';
