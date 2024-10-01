@@ -1,16 +1,16 @@
 export interface Event {
   id: number;
   title: string;
-  date: string;
+  date?: string;
   price: string;
   image: string;
-  fansignDate: string;
-  applicationPeriod: string;
-  availableSlots: number;
-  winnersAnnouncement: string;
-  nftPurchaseLimit: number;
-  currentParticipants: number;
-  member: number;
+  fansignDate?: string;
+  applicationPeriod?: string;
+  availableSlots?: number;
+  winnersAnnouncement?: string;
+  nftPurchaseLimit?: number;
+  currentParticipants?: number;
+  member?: number;
   nftImages?: string[];
   contractAddress?: string;
   transactionHash?: string;

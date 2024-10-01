@@ -18,6 +18,8 @@ export default function Hero() {
     });
   }, []);
 
+  const nftInfo = useNFTContractData();
+
   const totalSlides = Math.ceil(activeEvents.length / 2);
 
   useEffect(() => {
@@ -127,7 +129,11 @@ export default function Hero() {
         isOpen={!!selectedEvent}
         onClose={handleCloseModal}
         event={selectedEvent}
+<<<<<<< HEAD
         nftInfo={nftInfo}
+=======
+        nftInfo={ nftInfo}
+>>>>>>> 30f0dbe (fix type bugs)
       />
     </section>
   );
