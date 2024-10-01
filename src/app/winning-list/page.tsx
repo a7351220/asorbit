@@ -6,9 +6,21 @@ import WinnerModal from '@/components/WinnerModal';
 import Navbar from '@/components/Navbar';
 import { events, Event } from '@/data/event-data';
 import { getEventStatus, getEventStatusDescription } from '@/lib/event-status';
+import { useLotteryContractData } from '@/hooks/useLotteryContractData';
+import { useNFTContractData } from '@/hooks/useNFTContractData';
 
 const WinningList: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const { 
+    lotteryFinished, 
+    winners, 
+    winnerTokenIds, 
+  } = useLotteryContractData();
+  const { 
+    name, 
+    saleEndTime, 
+    allParticipants 
+  } = useNFTContractData();
 
   const filteredEvents = useMemo(() => {
     return events
@@ -17,10 +29,8 @@ const WinningList: React.FC = () => {
         return status === 'ended' || status === 'announced' || status === 'completed';
       })
       .sort((a, b) => {
-        // 將日期字符串轉換為 Date 對象
         const dateA = new Date(a.winnersAnnouncement);
         const dateB = new Date(b.winnersAnnouncement);
-        // 從最近到最遠排序（降序）
         return dateB.getTime() - dateA.getTime();
       });
   }, []);
@@ -44,9 +54,25 @@ const WinningList: React.FC = () => {
           <span className="border-b-4 border-blue-500 pb-2">Winning List</span>
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-          {filteredEvents.map((event) => {
-              const status = getEventStatus(event);
-              const statusDescription = getEventStatusDescription(status);
+          {filteredEvents.map((event, index) => {
+              let status = getEventStatus(event);
+              let statusDescription = getEventStatusDescription(status);
+              let participantsCount = event.currentParticipants.toString();
+              let title = event.title;
+              let winnersAnnouncement = event.winnersAnnouncement;
+              let winnerInfo = '';
+              
+              if (index === 0) {
+                status = lotteryFinished ? 'announced' : 'ended';
+                statusDescription = getEventStatusDescription(status);
+                participantsCount = allParticipants ? allParticipants.length.toString() : 'Loading...';
+                title = name || 'Loading...';
+                winnersAnnouncement = saleEndTime || 'Loading...';
+                
+                if (winners && winnerTokenIds) {
+                  winnerInfo = `Winners: ${winners.length}, Token IDs: ${winnerTokenIds.join(', ')}`;
+                }
+              }
               
               return (
                 <div 
@@ -68,16 +94,23 @@ const WinningList: React.FC = () => {
                     </div>
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl sm:text-2xl font-bold text-blue-900 mb-2 truncate">{event.title}</h3>
+                    <h3 className="text-xl sm:text-2xl font-bold text-blue-900 mb-2 truncate">{title}</h3>
                     <p className="text-sm sm:text-base text-gray-600 mb-2 font-medium">
-                      Winners Announcement: {event.winnersAnnouncement}
+                      Winners Announcement: {winnersAnnouncement}
                     </p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm sm:text-base text-blue-500 font-semibold">{event.availableSlots} Winners</span>
+                    <div className="flex flex-col space-y-2">
+                      <span className="text-sm sm:text-base text-blue-500 font-semibold">
+                        {participantsCount} Participants
+                      </span>
+                      {index === 0 && winnerInfo && (
+                        <span className="text-sm sm:text-base text-green-500 font-semibold">
+                          {winnerInfo}
+                        </span>
+                      )}
                       <Button onClick={(e) => {
                         e.stopPropagation();
                         handleEventClick(event);
-                      }} className="bg-blue-600 hover:bg-blue-700">View Winners</Button>
+                      }} className="bg-blue-600 hover:bg-blue-700 self-start">View Winners</Button>
                     </div>
                   </div>
                 </div>
