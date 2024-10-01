@@ -9,7 +9,6 @@ import { useNFTContractData } from '@/hooks/useNFTContractData';
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const nftInfo = useNFTContractData();
 
   const activeEvents = useMemo(() => {
     return events.filter(event => {
@@ -129,11 +128,7 @@ export default function Hero() {
         isOpen={!!selectedEvent}
         onClose={handleCloseModal}
         event={selectedEvent}
-<<<<<<< HEAD
         nftInfo={nftInfo}
-=======
-        nftInfo={ nftInfo}
->>>>>>> 30f0dbe (fix type bugs)
       />
     </section>
   );
