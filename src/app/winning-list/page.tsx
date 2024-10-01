@@ -29,8 +29,8 @@ const WinningList: React.FC = () => {
         return status === 'ended' || status === 'announced' || status === 'completed';
       })
       .sort((a, b) => {
-        const dateA = new Date(a.winnersAnnouncement);
-        const dateB = new Date(b.winnersAnnouncement);
+        const dateA = new Date(a.winnersAnnouncement || '');
+        const dateB = new Date(b.winnersAnnouncement || '');
         return dateB.getTime() - dateA.getTime();
       });
   }, []);
@@ -57,7 +57,7 @@ const WinningList: React.FC = () => {
           {filteredEvents.map((event, index) => {
               let status = getEventStatus(event);
               let statusDescription = getEventStatusDescription(status);
-              let participantsCount = event.currentParticipants.toString();
+              let participantsCount = event.currentParticipants?.toString() || 'Loading...';
               let title = event.title;
               let winnersAnnouncement = event.winnersAnnouncement;
               let winnerInfo = '';
