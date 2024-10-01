@@ -1,8 +1,23 @@
 'use client';
 import React, { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import Link from 'next/link';
 import Navbar from '@/components/Navbar';
+import { useNFTContractData } from '@/hooks/useNFTContractData';
+import { useLotteryContractData } from '@/hooks/useLotteryContractData';
+import { nftSaleContractConfig, nftLotteryContractConfig } from '@/app/contracts';
+import { useAccount, useReadContract } from 'wagmi';
+
+interface NFT {
+  id: number;
+  image: string;
+  name: string;
+  contractAddress: string;
+  isWinnerNFT: boolean;
+  isLimitedEdition: boolean;
+}
 import { useNFTContractData } from '@/hooks/useNFTContractData';
 import { useLotteryContractData } from '@/hooks/useLotteryContractData';
 import { nftSaleContractConfig, nftLotteryContractConfig } from '@/app/contracts';
@@ -21,7 +36,21 @@ const MyNFTPage: React.FC = () => {
   const { address } = useAccount();
   const { participantInfo, name: saleNFTName } = useNFTContractData();
   const { winners } = useLotteryContractData();
+  const { address } = useAccount();
+  const { participantInfo, name: saleNFTName } = useNFTContractData();
+  const { winners } = useLotteryContractData();
 
+  const winnerIndex = useMemo(() => {
+    return address && winners 
+      ? winners.findIndex(winner => winner.toLowerCase() === address.toLowerCase()) 
+      : -1;
+  }, [address, winners]);
+
+  const { data: isLimitedEditionForWinner } = useReadContract({
+    ...nftLotteryContractConfig,
+    functionName: 'isLimitedEdition',
+    args: winnerIndex !== -1 ? [BigInt(winnerIndex + 1)] : undefined,
+  });
   const winnerIndex = useMemo(() => {
     return address && winners 
       ? winners.findIndex(winner => winner.toLowerCase() === address.toLowerCase()) 
@@ -57,6 +86,29 @@ const MyNFTPage: React.FC = () => {
 
     return [...saleNFTs, ...lotteryNFT];
   }, [participantInfo, winnerIndex, saleNFTName, isLimitedEditionForWinner]);
+  const myNFTs: NFT[] = useMemo(() => {
+    const saleNFTs = participantInfo?.[2].map(id => ({
+      id: Number(id),
+      image: `/event/1/event-1.jpg`,
+      name: `${saleNFTName} #${id}`,
+      contractAddress: nftSaleContractConfig.address,
+      isWinnerNFT: false,
+      isLimitedEdition: false
+    })) || [];
+
+    const lotteryNFT = winnerIndex !== -1
+      ? [{
+          id: winnerIndex + 1,
+          image: `/event/1/event-1.jpg`,
+          name: `Winner NFT #${winnerIndex + 1}`,
+          contractAddress: nftLotteryContractConfig.address,
+          isWinnerNFT: true,
+          isLimitedEdition: isLimitedEditionForWinner ?? false
+        }]
+      : [];
+
+    return [...saleNFTs, ...lotteryNFT];
+  }, [participantInfo, winnerIndex, saleNFTName, isLimitedEditionForWinner]);
 
   return (
     <div className="bg-white min-h-screen text-black">
@@ -64,8 +116,7 @@ const MyNFTPage: React.FC = () => {
       <main className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-center text-blue-900 mb-8">My NFTs</h1>
         {myNFTs.length === 0 ? (
-          <p className="text-center">You don't own any NFTs from this collection yet.</p>
-        ) : (
+          <p className="text-center">You don&apos;t own any NFTs from this collection yet.</p>        ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {myNFTs.map((nft) => (
               <Link 
@@ -91,6 +142,10 @@ const MyNFTPage: React.FC = () => {
                     {nft.isLimitedEdition && (
                       <div className="bg-purple-500 text-white px-2 py-1 rounded-full text-xs">
                         Limited
+                    )}
+                    {nft.isLimitedEdition && (
+                      <div className="bg-purple-500 text-white px-2 py-1 rounded-full text-xs">
+                        Limited
                       </div>
                     )}
                   </div>
@@ -98,7 +153,17 @@ const MyNFTPage: React.FC = () => {
                 <div className="p-2">
                   <p className="font-bold text-sm">{nft.name}</p>
                   {nft.isLimitedEdition && <p className="text-xs text-purple-600">Limited Edition</p>}
+                  </div>
                 </div>
+                <div className="p-2">
+                  <p className="font-bold text-sm">{nft.name}</p>
+                  {nft.isLimitedEdition && <p className="text-xs text-purple-600">Limited Edition</p>}
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </main>
               </Link>
             ))}
           </div>
