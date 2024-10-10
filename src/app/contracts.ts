@@ -1,6 +1,6 @@
 export const nftSaleContractConfig = {
 
-    address: '0x3663F7E94CF9893C35441bB6f7B164088D9b564f',
+    address: '0x1Bf75Cac1726649D616fc43cEa14Ff197Ce68801',
     abi:[
     {
         "type": "constructor",

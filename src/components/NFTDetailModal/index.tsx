@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import {
   Dialog,
   DialogContent,
@@ -8,29 +9,31 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { NFT } from "@/data/nft-data";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import NFTGroupLogo from '@/components/NFTGroupLogo';
 
 interface NFTDetailModalProps {
   nft: NFT | null;
   isOpen: boolean;
   onClose: () => void;
+  transactionHash?: string;
 }
 
-const NFTDetailModal: React.FC<NFTDetailModalProps> = ({ nft, isOpen, onClose }) => {
+const NFTDetailModal: React.FC<NFTDetailModalProps> = ({ nft, isOpen, onClose, transactionHash }) => {
   const [activeTab, setActiveTab] = useState("details");
-  const [showFullAddress, setShowFullAddress] = useState(false);
+  const [showFullHash, setShowFullHash] = useState(false);
 
   if (!isOpen || !nft) return null;
 
-  const truncateAddress = (address: string) => {
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  const truncateHash = (hash: string) => {
+    return `${hash.slice(0, 6)}...${hash.slice(-4)}`;
   };
 
-  const toggleAddress = () => {
-    setShowFullAddress(!showFullAddress);
+  const toggleHash = () => {
+    setShowFullHash(!showFullHash);
   };
+  
+  console.log("Transaction Hash in Modal:", transactionHash);
+
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -51,7 +54,6 @@ const NFTDetailModal: React.FC<NFTDetailModalProps> = ({ nft, isOpen, onClose })
             </div>
           </div>
           <div className="w-full lg:w-[55%] flex flex-col">
-            
             <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-grow">
               <TabsList className="grid w-full grid-cols-3 mb-4">
                 <TabsTrigger value="details">Details</TabsTrigger>
@@ -60,47 +62,32 @@ const NFTDetailModal: React.FC<NFTDetailModalProps> = ({ nft, isOpen, onClose })
               </TabsList>
 
               <TabsContent value="details" className="space-y-4">
-                <div className="flex items-center justify-between p-3 rounded-lg mb-4">
-                <div className="flex items-center">
-                  <div className="w-12 h-12 mr-3 rounded-full overflow-hidden flex-shrink-0 border-2 border-gray-300">
-                    <NFTGroupLogo group={nft.group} />
-                  </div>
-                  <div>
-                    <p className="font-bold text-lg">{nft.group}</p>
-                    <p className="text-sm text-gray-600">Rarity: {nft.rarity}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-bold text-xl text-blue-600">{nft.price}</p>
-                  <p className="text-sm text-gray-600">Purchase Price</p>
-                </div>
-              </div>
                 <div className="bg-gray-100 p-4 rounded-lg">
                   <h3 className="font-bold mb-2 text-lg">Details</h3>
                   <div className="grid grid-cols-1 gap-3 text-sm">
                     <div>
-                      <p className="font-semibold">NFT ID #{nft.tokenId}</p>
+                      <p className="font-semibold">NFT ID #{nft.id}</p>
                     </div>
-                    
-                    {nft.purchaseDate && (
+                    {transactionHash && (
                       <div>
-                        <p className="font-semibold">Purchase Date</p>
-                        <p className="text-gray-600">{nft.purchaseDate}</p>
+                        <p className="font-semibold">Transaction Hash</p>
+                        <div className="bg-white p-2 rounded-md overflow-x-auto">
+                          <Link
+                            href={`https://sepolia.basescan.org/tx/${transactionHash}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-gray-600 hover:text-blue-500 whitespace-nowrap"
+                          >
+                            <p 
+                              onClick={toggleHash}
+                              title="Click to toggle full hash"
+                            >
+                              {showFullHash ? transactionHash : truncateHash(transactionHash)}
+                            </p>
+                          </Link>
+                        </div>
                       </div>
                     )}
-                    <div>
-                      <p className="font-semibold">transaction contract address</p>
-                      <div className="bg-white p-2 rounded-md overflow-x-auto">
-                      <p 
-                        className="text-gray-600 cursor-pointer hover:text-blue-500 whitespace-nowrap"
-                        onClick={toggleAddress}
-                        title="Click to toggle full address"
-                      >
-                        {showFullAddress ? '0xb0a7ff2181df295f45864e2c9e077ecdc43e872cd075de88826c8a49950343a1' : truncateAddress('0xb0a7ff2181df295f45864e2c9e077ecdc43e872cd075de88826c8a49950343a1')}
-                      </p>
-                    </div>
-                    </div>
-                  
                   </div>
                 </div>
               </TabsContent>
