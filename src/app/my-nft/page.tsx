@@ -11,21 +11,11 @@ import NFTGroupLogo from '@/components/NFTGroupLogo';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { useNFTContractData } from '@/hooks/useNFTContractData';
 import { useLotteryContractData } from '@/hooks/useLotteryContractData';
-import { nftSaleContractConfig, nftLotteryContractConfig } from '@/app/contracts';
+import { nftSaleContractConfig, nftLotteryContractConfig, mintNFTContractConfig } from '@/app/contracts';
 import { useAccount, useWatchContractEvent, useReadContract } from 'wagmi';
+import { useMintNFTContract } from '@/hooks/useMintNFTContract';
+import { nfts, NFT } from '@/data/nft-data';
 
-
-interface NFT {
-  id: number;
-  image: string;
-  name: string;
-  contractAddress: string;
-  isWinnerNFT: boolean;
-  isLimitedEdition: boolean;
-  group: string;
-  status: 'active' | 'redeemed';
-  transactionHash?: string;
-}
 
 const MyNFTPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -39,14 +29,13 @@ const MyNFTPage: React.FC = () => {
   const [selectedNFTsForCategory, setSelectedNFTsForCategory] = useState<number[]>([]);
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
   const [nftTransactionHashes, setNftTransactionHashes] = useState<Record<number, string>>({});
-
-
+  const { ownedTokens, isLoadingOwnedTokens, contractName } = useMintNFTContract();
   const { address } = useAccount();
-  const { participantInfo, name: saleNFTName } = useNFTContractData();
+  const { participantInfo, name: saleNFTName ,symbol:salesymbol} = useNFTContractData();
   const { winners } = useLotteryContractData();
 
   const winnerIndex = useMemo(() => {
-    return address && winners 
+    return address && winners   
       ? winners.findIndex(winner => winner.toLowerCase() === address.toLowerCase()) 
       : -1;
   }, [address, winners]);
@@ -97,17 +86,39 @@ const MyNFTPage: React.FC = () => {
   }, []);
 
   const myNFTs: NFT[] = useMemo(() => {
-    const saleNFTs = participantInfo?.[2].map(id => ({
-      id: Number(id),
-      image: `/nft-images/unknow.png`,
-      name: `${saleNFTName} #${id}`,
-      contractAddress: nftSaleContractConfig.address,
-      isWinnerNFT: false,
-      isLimitedEdition: false,
-      group: `${saleNFTName}`,
-      status: 'active' as const,
-      transactionHash: nftTransactionHashes[Number(id)]
-    })) || [];
+    const mintNFTs = ownedTokens 
+      ? ownedTokens.map((tokenId: bigint) => {
+        const id = Number(tokenId)+20;
+          const details = nfts.find(nft => nft.id === id);
+          if (details) {
+            return {
+              ...details,
+              contractAddress: mintNFTContractConfig.address,
+              isWinnerNFT: false,
+              status: details.status || 'active',
+              transactionHash: nftTransactionHashes[Number(id)]
+            };
+          }
+          return null;
+        }).filter((nft): nft is NFT => nft !== null)
+      : [];
+
+    const saleNFTs = participantInfo && participantInfo[2]
+      ? participantInfo[2].map((id: bigint) => ({
+          id: `${salesymbol}${Number(id)}`,
+          image: `/nft-images/unknow.png`,
+          name: `${saleNFTName} #${id.toString()}`,
+          contractAddress: nftSaleContractConfig.address,
+          isWinnerNFT: false,
+          isLimitedEdition: false,
+          group: saleNFTName || '',
+          status: 'active',
+          currentOwner: address || '',
+          price: '0 ETH',
+          rarity: 'Common' as const,
+          transactionHash: nftTransactionHashes[Number(id)]
+        }))
+      : [];
 
     const lotteryNFT = winnerIndex !== -1
       ? [{
@@ -118,14 +129,16 @@ const MyNFTPage: React.FC = () => {
           isWinnerNFT: true,
           isLimitedEdition: isLimitedEditionForWinner ?? false,
           group: 'Lottery NFT',
-          status: 'active' as const,
+          status: 'active',
+          currentOwner: address || '',
+          price: '0 ETH',
+          rarity: 'Legendary' as const,
           transactionHash: nftTransactionHashes[winnerIndex + 1]
         }]
       : [];
 
-      return [...saleNFTs, ...lotteryNFT];
-    }, [participantInfo, winnerIndex, saleNFTName, isLimitedEditionForWinner, nftTransactionHashes]);
-
+    return [...mintNFTs, ...saleNFTs, ...lotteryNFT];
+  }, [ownedTokens, participantInfo, winnerIndex, saleNFTName, isLimitedEditionForWinner, nftTransactionHashes, address]);
 
   useEffect(() => {
     const groups = Array.from(new Set(myNFTs.map(nft => nft.group)));
@@ -136,6 +149,8 @@ const MyNFTPage: React.FC = () => {
       setFavorites(JSON.parse(savedFavorites));
     }
   }, [myNFTs]);
+
+  
 
   const categories = useMemo(() => {
     return ['All', 'My fav', 'Redeemed', ...customCategories.map(cat => cat.name)];
@@ -233,7 +248,9 @@ const MyNFTPage: React.FC = () => {
       <Navbar />
       <main className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-center text-blue-900 mb-8">- MY NFT -</h1>
-
+        {myNFTs.length === 0 ? (
+          <p className="text-center">You don&apos;t own any NFTs from this collection yet.</p>
+        ) : (
         <div className="flex flex-col md:flex-row">
           <div className="w-full md:w-1/4 pr-0 md:pr-4 mb-4 md:mb-0">
             <div className="bg-gray-100 p-4 rounded-lg">
@@ -367,6 +384,7 @@ const MyNFTPage: React.FC = () => {
             </div>
           </div>
         </div>
+        )}
       </main>
       <NFTDetailModal 
         nft={selectedNFT} 

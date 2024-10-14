@@ -12,10 +12,10 @@ contract DeployNFTSaleAndLottery is Script {
 
         // Deploy NFTSale
         NFTSale nftSale = new NFTSale(
-            "MyNFT",
-            "MNFT",
-            0.001 ether, // 價格
-            block.timestamp + 10 minutes // 銷售結束時間，設置為10分鐘
+            "IVE",
+            "IVE",
+            0.0005 ether, // 價格
+            block.timestamp + 1 days // 銷售結束時間，設置為10分鐘
         );
 
         console.log("NFTSale deployed at:", address(nftSale));
@@ -23,7 +23,7 @@ contract DeployNFTSaleAndLottery is Script {
         // Deploy NFTLottery
         NFTLottery nftLottery = new NFTLottery(
             address(nftSale),
-            14327289756238418072171787957176927005001802818593754882820454675324826202191, // subscriptionId
+            68243684758120062287473575528302979982098457404998953588869079544149016865901, // subscriptionId
             2, // winnerCount
             1 // limitedEditionCount
         );

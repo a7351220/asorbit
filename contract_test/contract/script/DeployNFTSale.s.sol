@@ -10,9 +10,9 @@ contract DeployNFTSale is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         NFTSale nftSale = new NFTSale(
-            "MyNFT",
-            "MNFT",
-            0.001 ether, // 價格
+            "H1KEY",
+            "H1K",
+            0.0005 ether, // 價格
             block.timestamp + 1 days // 銷售結束時間
         );
 

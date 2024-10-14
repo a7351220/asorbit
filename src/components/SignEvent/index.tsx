@@ -28,7 +28,6 @@ const SignEvent: React.FC = () => {
           price: nftData.price,
           totalSupply: nftData.totalSupply,
           saleEndTime: nftData.saleEndTime,
-          applicationPeriod: `${new Date().toLocaleDateString()} - ${new Date(nftData.saleEndTime).toLocaleDateString()}`,
           isDeployed: true,
         } as ContractEvent;
         return updatedEvent;

@@ -46,6 +46,15 @@ const WinningList: React.FC = () => {
     setSelectedEvent(null);
   };
 
+  const getDisplayTitle = (event: Event, index: number) => {
+    if (index === 0 && name) {
+      // For the deployed event, find the matching event from the events array
+      const matchingEvent = events.find(e => e.title.startsWith(name.split(' ')[0]));
+      return matchingEvent ? matchingEvent.title : name;
+    }
+    return event.title;
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -58,7 +67,7 @@ const WinningList: React.FC = () => {
               let status = getEventStatus(event);
               let statusDescription = getEventStatusDescription(status);
               let participantsCount = event.currentParticipants?.toString() || 'Loading...';
-              let title = event.title;
+              let title = getDisplayTitle(event, index);
               let winnersAnnouncement = event.winnersAnnouncement;
               let winnerInfo = '';
               
@@ -66,7 +75,6 @@ const WinningList: React.FC = () => {
                 status = lotteryFinished ? 'announced' : 'ended';
                 statusDescription = getEventStatusDescription(status);
                 participantsCount = allParticipants ? allParticipants.length.toString() : 'Loading...';
-                title = name || 'Loading...';
                 winnersAnnouncement = saleEndTime || 'Loading...';
                 
                 if (winners && winnerTokenIds) {
@@ -83,7 +91,7 @@ const WinningList: React.FC = () => {
                   <div className="relative w-full" style={{ paddingTop: '75%' }}>
                     <Image
                       src={event.image}
-                      alt={event.title}
+                      alt={title}
                       layout="fill"
                       objectFit="cover"
                       className="transition-transform duration-300 group-hover:scale-105"

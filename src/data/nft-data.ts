@@ -9,9 +9,13 @@ export interface NFT {
   currentOwner: string;
   listingDate?: string;
   expirationDate?: string;
-  status?: 'on_market' | 'owned' | 'redeemed';
+  status: 'on_market' | 'owned' | 'redeemed' | 'active';
   tokenId?: string;
   purchaseDate?: string;
+  contractAddress?: string;
+  isWinnerNFT?: boolean;
+  isLimitedEdition?: boolean;
+  transactionHash?: string;
 }
 
 export const groups: string[] = [
@@ -445,6 +449,34 @@ export const nfts: NFT[] = [
     status: 'owned',
     tokenId: '3030',
     purchaseDate: '2025-04-30'
+  },
+  {
+    id: 31,
+    name: 'mingyu',
+    group: 'SEVENTEEN',
+    price: '0.14 ETH',
+    image: '/nft-images/31.jpg',
+    rarity: 'Rare',
+    description: "Limited edition Mingyu NFT from SEVENTEEN's latest comeback.",
+    currentOwner: '0x1234567890123456789012345678901234567890',
+    listingDate: '2024-07-01',
+    expirationDate: '2024-10-01',
+    status: 'owned',
+    tokenId: '4397'
+  },
+  {
+    id: 32,
+    name: 'mingyu',
+    group: 'SEVENTEEN',
+    price: '0.15 ETH',
+    image: '/nft-images/32.jpg',
+    rarity: 'Rare',
+    description: "Exclusive mingyu NFT from SEVENTEEN's recent photo shoot.",
+    currentOwner: '0x2345678901234567890123456789012345678901',
+    listingDate: '2024-07-02',
+    expirationDate: '2024-10-02',
+    status: 'owned',
+    tokenId: '4398'
   }
 ];
 
