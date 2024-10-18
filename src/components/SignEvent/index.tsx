@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import BookingModal from '@/components/BookingModal';
 import { events } from '@/data/event-data';
 import { useNFTContractData } from '@/hooks/useNFTContractData';
+import { useRouter } from 'next/navigation';
+import { useToast } from "@/hooks/use-toast";
+import { useAccount } from 'wagmi';
 
 interface ContractEvent {
   id: number;
@@ -18,8 +21,21 @@ interface ContractEvent {
 const SignEvent: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<ContractEvent | null>(null);
   const [contractEvents, setContractEvents] = useState<ContractEvent[]>([]);
+  const [hasDID, setHasDID] = useState(false);
+  const router = useRouter();
+  const { toast } = useToast();
+  const { address } = useAccount();
 
   const nftData = useNFTContractData();
+
+  useEffect(() => {
+    if (address) {
+      const storedDIDs = JSON.parse(localStorage.getItem('userDIDs') || '{}');
+      setHasDID(!!storedDIDs[address]);
+    } else {
+      setHasDID(false);
+    }
+  }, [address]);
 
   useEffect(() => {
     if (nftData.name && nftData.totalSupply && nftData.price && nftData.saleEndTime) {
@@ -43,6 +59,15 @@ const SignEvent: React.FC = () => {
   }, [nftData.name, nftData.totalSupply, nftData.price, nftData.saleEndTime]);
 
   const handleEventClick = (event: ContractEvent) => {
+    if (!hasDID) {
+      toast({
+        title: "DID Required",
+        description: "You need to register a DID before signing the event. Please go to the DID registration page.",
+        variant: "destructive",
+      });
+      router.push('/register-did');
+      return;
+    }
     setSelectedEvent(event);
   };
 

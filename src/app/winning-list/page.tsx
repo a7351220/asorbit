@@ -13,8 +13,8 @@ const WinningList: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const { 
     lotteryFinished, 
-    winners, 
-    winnerTokenIds, 
+    isLoading,
+    isError
   } = useLotteryContractData();
   const { 
     name, 
@@ -47,20 +47,22 @@ const WinningList: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-white min-h-screen text-black">
       <Navbar />
-      <main className="container mx-auto px-4 py-12">
-        <h1 className="text-3xl sm:text-4xl font-bold text-center text-blue-900 mb-10">
-          <span className="border-b-4 border-blue-500 pb-2">Winning List</span>
-        </h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-          {filteredEvents.map((event, index) => {
+      <main className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold text-center text-blue-900 mb-8">Winning List</h1>
+        {isLoading ? (
+          <p className="text-center">Loading lottery data...</p>
+        ) : isError ? (
+          <p className="text-center text-red-500">Error loading lottery data. Please try again later.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
+            {filteredEvents.map((event, index) => {
               let status = getEventStatus(event);
               let statusDescription = getEventStatusDescription(status);
               let participantsCount = event.currentParticipants?.toString() || 'Loading...';
               let title = event.title;
               let winnersAnnouncement = event.winnersAnnouncement;
-              let winnerInfo = '';
               
               if (index === 0) {
                 status = lotteryFinished ? 'announced' : 'ended';
@@ -68,10 +70,6 @@ const WinningList: React.FC = () => {
                 participantsCount = allParticipants ? allParticipants.length.toString() : 'Loading...';
                 title = name || 'Loading...';
                 winnersAnnouncement = saleEndTime || 'Loading...';
-                
-                if (winners && winnerTokenIds) {
-                  winnerInfo = `Winners: ${winners.length}, Token IDs: ${winnerTokenIds.join(', ')}`;
-                }
               }
               
               return (
@@ -102,28 +100,24 @@ const WinningList: React.FC = () => {
                       <span className="text-sm sm:text-base text-blue-500 font-semibold">
                         {participantsCount} Participants
                       </span>
-                      {index === 0 && winnerInfo && (
-                        <span className="text-sm sm:text-base text-green-500 font-semibold">
-                          {winnerInfo}
-                        </span>
-                      )}
                       <Button onClick={(e) => {
                         e.stopPropagation();
                         handleEventClick(event);
-                      }} className="bg-blue-600 hover:bg-blue-700 self-start">View Winners</Button>
+                      }} className="bg-blue-600 hover:bg-blue-700 self-start mt-4">View Details</Button>
                     </div>
                   </div>
                 </div>
               );
             })}
           </div>
-        </main>
-        <WinnerModal
-          isOpen={!!selectedEvent}
-          onClose={handleCloseModal}
-          event={selectedEvent}
-        />
-      </div>
+        )}
+      </main>
+      <WinnerModal
+        isOpen={!!selectedEvent}
+        onClose={handleCloseModal}
+        event={selectedEvent}
+      />
+    </div>
   );
 };
 

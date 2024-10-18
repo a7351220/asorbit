@@ -30,11 +30,12 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, onClose, event }) => 
 
   const { 
     winners, 
+    winnerCounts,
     winnerTokenIds, 
     limitedEditionTokenIds,
     lotteryFinished,
-    totalWeight,
-    refreshLotteryData,
+    isLoading,
+    isError
   } = useLotteryContractData();
 
   const { 
@@ -52,8 +53,12 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, onClose, event }) => 
   const toggleWinnersExpanded = () => setIsWinnersExpanded(!isWinnersExpanded);
   const toggleAllParticipantsExpanded = () => setIsAllParticipantsExpanded(!isAllParticipantsExpanded);
 
-  const status = event ? getEventStatus(event) : '';
-  const statusDescription = getEventStatusDescription(status as 'upcoming' | 'ongoing' | 'ended' | 'completed' | 'announced');
+  const getModalStatus = () => {
+    if (isLoading) return 'Loading...';
+    if (isError) return 'Error';
+    if (!lotteryFinished) return 'Ongoing';
+    return 'Completed';
+  };
 
   const shortenAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
@@ -89,7 +94,15 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, onClose, event }) => 
   };
 
   const renderContent = () => {
-    if (status === 'announced' || status === 'completed') {
+    if (isLoading) {
+      return <p>Loading lottery data...</p>;
+    }
+
+    if (isError) {
+      return <p>Error loading lottery data. Please try again later.</p>;
+    }
+
+    if (lotteryFinished) {
       return (
         <>
           <div className="mt-6">
@@ -106,21 +119,14 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, onClose, event }) => 
             </div>
             {isWinnersExpanded && (
               <div className="mt-2 bg-blue-50 p-4 rounded-lg">
-                {winners && winners.length > 0 ? (
-                  <div>
-                    <h4 className="font-bold mb-2">Winners:</h4>
-                    <ul className="list-disc pl-5">
-                      {winners.map((winner, index) => (
-                        <li key={index} className="mb-1">
-                          {winner} - Token ID: {winnerTokenIds?.[index]?.toString()}
-                          {limitedEditionTokenIds?.includes(winnerTokenIds?.[index] || BigInt(0)) && " (Limited Edition)"}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : (
-                  <p>No winners yet</p>
-                )}
+                <h4 className="font-bold mb-2">Winners: {winners.length}</h4>
+                <ul className="list-disc pl-5">
+                  {winners.map((winner, index) => (
+                    <li key={index} className="mb-1">
+                      {shortenAddress(winner)} - Won: {winnerCounts[index]?.toString() || '1'} time(s)
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
           </div>
@@ -141,7 +147,7 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, onClose, event }) => 
               <div className="mt-2 bg-purple-50 p-4 rounded-lg">
                 <ul className="list-disc pl-5 max-h-60 overflow-y-auto">
                   {allParticipants?.map((participant, index) => (
-                    <li key={index}>{participant}</li>
+                    <li key={index}>{shortenAddress(participant)}</li>
                   ))}
                 </ul>
               </div>
@@ -151,14 +157,13 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, onClose, event }) => 
           {renderParticipantInfo()}
         </>
       );
-    } else if (status === 'ended') {
+    } else {
       return (
         <div className="mt-6">
-          <p className="text-xl lg:text-2xl font-semibold text-blue-600">Winners will be announced soon.</p>
+          <p className="text-xl lg:text-2xl font-semibold text-blue-600">Lottery is ongoing. Winners will be announced soon.</p>
         </div>
       );
     }
-    return null;
   };
 
   return (
@@ -174,17 +179,13 @@ const WinnerModal: React.FC<WinnerModalProps> = ({ isOpen, onClose, event }) => 
             <Image src={event?.image || ''} alt={event?.title || ''} width={400} height={400} className="rounded-lg w-full h-auto" />
           </div>
           <div className="space-y-2 text-sm lg:text-base">
-            <p><span className="font-semibold">Status:</span> {statusDescription}</p>
-            {/* <p><span className="font-semibold">Fansign Date:</span> {event?.fansignDate}</p>
-            <p><span className="font-semibold">Available Slots:</span> {event?.availableSlots}</p> */}
+            <p><span className="font-semibold">Status:</span> {getModalStatus()}</p>
             <p><span className="font-semibold">Total Participants:</span> {allParticipants?.length || 0}</p>
             <p><span className="font-semibold">Winners Announcement:</span> {saleEndTime}</p>
-
           </div>
         </div>
         {renderContent()}
         <div className="mt-4 flex flex-col space-y-4">
-          <Button onClick={refreshLotteryData}>Refresh Lottery Data</Button>
           <Button 
             onClick={openContractOnBasescan}
             className="flex items-center justify-center"

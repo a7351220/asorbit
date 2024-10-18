@@ -250,9 +250,40 @@ contract NFTLottery is VRFConsumerBaseV2Plus, ERC721 {
         return "https://example.com/api/regular-winner-metadata/";
     }
 
-    function getWinners() public view returns (address[] memory) {
-        require(lotteryFinished, "Lottery not finished yet");
-        return winners;
+    function getWinners()
+        public
+        view
+        returns (address[] memory, uint256[] memory)
+    {
+        address[] memory uniqueWinners = new address[](winners.length);
+        uint256[] memory counts = new uint256[](winners.length);
+        uint256 uniqueCount = 0;
+
+        for (uint256 i = 0; i < winners.length; i++) {
+            bool found = false;
+            for (uint256 j = 0; j < uniqueCount; j++) {
+                if (uniqueWinners[j] == winners[i]) {
+                    counts[j]++;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                uniqueWinners[uniqueCount] = winners[i];
+                counts[uniqueCount] = 1;
+                uniqueCount++;
+            }
+        }
+
+        // 創建新的數組以匹配實際的唯一獲獎者數量
+        address[] memory finalWinners = new address[](uniqueCount);
+        uint256[] memory finalCounts = new uint256[](uniqueCount);
+        for (uint256 i = 0; i < uniqueCount; i++) {
+            finalWinners[i] = uniqueWinners[i];
+            finalCounts[i] = counts[i];
+        }
+
+        return (finalWinners, finalCounts);
     }
 
     function getWinnerTokenIds() public view returns (uint256[] memory) {

@@ -14,7 +14,7 @@ contract DeployNFTSaleAndLottery is Script {
         NFTSale nftSale = new NFTSale(
             "MyNFT",
             "MNFT",
-            0.001 ether, // 價格
+            0.00001 ether, // 價格
             block.timestamp + 10 minutes // 銷售結束時間，設置為10分鐘
         );
 
@@ -23,7 +23,7 @@ contract DeployNFTSaleAndLottery is Script {
         // Deploy NFTLottery
         NFTLottery nftLottery = new NFTLottery(
             address(nftSale),
-            14327289756238418072171787957176927005001802818593754882820454675324826202191, // subscriptionId
+            103798843019592730386279729263496122955905342229275573833742759892634297171832, // subscriptionId
             2, // winnerCount
             1 // limitedEditionCount
         );
@@ -33,3 +33,6 @@ contract DeployNFTSaleAndLottery is Script {
         vm.stopBroadcast();
     }
 }
+
+// 部署命令：
+// forge script script/DeployNFTSaleAndLottery.s.sol:DeployNFTSaleAndLottery --rpc-url base_sepolia --broadcast --verify

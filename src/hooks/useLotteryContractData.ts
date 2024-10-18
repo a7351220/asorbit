@@ -1,51 +1,37 @@
-import { useReadContract, useWriteContract } from 'wagmi';
+import { useReadContract } from 'wagmi';
 import { nftLotteryContractConfig } from '@/app/contracts';
-import { useState } from 'react';
 
 export function useLotteryContractData() {
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-
-  const { data: winners } = useReadContract({
+  const { data: winnersData, isError: winnersError, isLoading: winnersLoading } = useReadContract({
     ...nftLotteryContractConfig,
     functionName: 'getWinners',
   });
 
-  const { data: winnerTokenIds } = useReadContract({
-    ...nftLotteryContractConfig,
-    functionName: 'getWinnerTokenIds',
-  });
-
-  const { data: limitedEditionTokenIds } = useReadContract({
-    ...nftLotteryContractConfig,
-    functionName: 'getLimitedEditionTokenIds',
-  });
-
-  const { data: isLimitedEdition } = useReadContract({
-    ...nftLotteryContractConfig,
-    functionName: 'isLimitedEdition',
-  });
-
-  const { data: lotteryFinished } = useReadContract({
+  const { data: lotteryFinished, isError: finishedError, isLoading: finishedLoading } = useReadContract({
     ...nftLotteryContractConfig,
     functionName: 'lotteryFinished',
   });
 
-  const { data: totalWeightData } = useReadContract({
+  const { data: winnerTokenIds, isError: winnerTokenIdsError, isLoading: winnerTokenIdsLoading } = useReadContract({
     ...nftLotteryContractConfig,
-    functionName: 'getTotalWeight',
+    functionName: 'getWinnerTokenIds',
   });
 
-  const refreshLotteryData = () => {
-    setRefreshTrigger(prev => prev + 1);
-  };
+  const { data: limitedEditionTokenIds, isError: limitedEditionTokenIdsError, isLoading: limitedEditionTokenIdsLoading } = useReadContract({
+    ...nftLotteryContractConfig,
+    functionName: 'getLimitedEditionTokenIds',
+  });
 
-  return {
-    winners: winners as `0x${string}`[] | undefined,
-    winnerTokenIds: winnerTokenIds as bigint[] | undefined,
-    limitedEditionTokenIds: limitedEditionTokenIds as bigint[] | undefined,
-    isLimitedEdition: isLimitedEdition as boolean | undefined,
-    lotteryFinished: lotteryFinished as boolean | undefined,
-    totalWeight: totalWeightData as bigint | undefined,
-    refreshLotteryData,
+  const winners = winnersData ? winnersData[0] as readonly string[] : [];
+  const winnerCounts = winnersData ? winnersData[1] as readonly bigint[] : [];
+
+  return { 
+    winners, 
+    winnerCounts, 
+    lotteryFinished, 
+    winnerTokenIds,
+    limitedEditionTokenIds,
+    isLoading: winnersLoading || finishedLoading || winnerTokenIdsLoading || limitedEditionTokenIdsLoading,
+    isError: winnersError || finishedError || winnerTokenIdsError || limitedEditionTokenIdsError
   };
 }

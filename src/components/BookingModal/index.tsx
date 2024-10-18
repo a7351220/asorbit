@@ -12,16 +12,19 @@ import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { nftSaleContractConfig } from '@/app/contracts'; 
 import { BaseError } from 'viem';
 import { useNFTContractData } from '@/hooks/useNFTContractData';
-import { Event } from '@/data/event-data'; // 添加這個導入
+import { Event } from '@/data/event-data';
+import { Toast } from "@/components/ui/toast"
+import { useToast } from "@/hooks/use-toast"
 
-interface ContractEvent {
-  id: number;
-  title: string;
-  price: string;
-  totalSupply: string;
-  saleEndTime: string;
-  image: string;
-}
+// 添加這個輔助函數來縮短哈希
+const shortenHash = (hash: string) => {
+  return `${hash.slice(0, 6)}...${hash.slice(-4)}`;
+};
+
+// 更新這個函數以使用 Base Sepolia 的區塊瀏覽器
+const getBlockExplorerLink = (hash: string) => {
+  return `https://sepolia.basescan.org/tx/${hash}`;
+};
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -35,6 +38,8 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, event, nft
   const [totalPrice, setTotalPrice] = useState('0');
 
   const { data: hash, error, isPending, writeContract } = useWriteContract();
+
+  const { toast } = useToast();
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
@@ -59,7 +64,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, event, nft
   const calculateTotalPrice = (qty: number = quantity) => {
     if (!nftInfo || !nftInfo.price) return '0.0000';
     const priceValue = parseFloat(nftInfo.price);
-    return (priceValue * qty).toFixed(4);
+    return (priceValue * qty).toFixed(5);
   };
 
   const handleMint = async () => {
@@ -72,9 +77,62 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, event, nft
     });
   };
 
+  useEffect(() => {
+    if (hash) {
+      toast({
+        title: "Transaction Submitted",
+        description: (
+          <a href={getBlockExplorerLink(hash)} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+            View on BaseScan: {shortenHash(hash)}
+          </a>
+        ),
+      })
+    }
+    if (isConfirmed) {
+      toast({
+        title: "Transaction Confirmed",
+        description: (
+          <>
+            Your NFT has been minted successfully!
+            <br />
+            <a href={getBlockExplorerLink(hash!)} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+              View on BaseScan
+            </a>
+          </>
+        ),
+      })
+    }
+    if (error) {
+      let errorMessage = (error as BaseError).shortMessage || error.message;
+      
+      // Check for specific error messages
+      if (errorMessage.includes("Sale has ended")) {
+        errorMessage = "The sale has ended. You can no longer mint NFTs for this event.";
+      }
+      
+      toast({
+        title: "Transaction Failed",
+        description: errorMessage,
+        variant: "destructive",
+      })
+    }
+  }, [hash, isConfirmed, error, toast]);
+
   if (!nftInfo) {
     return null;
   }
+
+  const handleDecrement = () => {
+    const newQty = Math.max(1, quantity - 1);
+    setQuantity(newQty);
+    setTotalPrice(calculateTotalPrice(newQty));
+  };
+
+  const handleIncrement = () => {
+    const newQty = quantity + 1;
+    setQuantity(newQty);
+    setTotalPrice(calculateTotalPrice(newQty));
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -90,7 +148,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, event, nft
             <h3 className="text-xl font-bold">SIGN EVENT</h3>
             <p><span className="font-semibold">Name:</span> {nftInfo.name}</p>
             <p><span className="font-semibold">Symbol:</span> {nftInfo.symbol}</p>
-            <p><span className="font-semibold">Total Supply:</span> {nftInfo.totalSupply}</p>
+            <p><span className="font-semibold">Current Supply:</span> {nftInfo.totalSupply}</p>
             <p><span className="font-semibold">Price:</span> {nftInfo.price} ETH</p>
             <p><span className="font-semibold">Sale End Time:</span> {nftInfo.saleEndTime}</p>
             <div className="mt-4">
@@ -101,17 +159,15 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, event, nft
             <div className="flex items-center space-x-4 mt-4">
               <span className="font-semibold text-xl">{nftInfo.price} ETH</span>
               <div className="flex items-center border rounded">
-                <button className="px-3 py-1 text-xl" onClick={() => {
-                  const newQty = Math.max(1, quantity - 1);
-                  setQuantity(newQty);
-                  setTotalPrice(calculateTotalPrice(newQty));
-                }}>-</button>
-                <input type="number" value={quantity} onChange={handleQuantityChange} className="w-16 text-center text-lg no-spinner" min="1"/>
-                <button className="px-3 py-1 text-xl" onClick={() => {
-                  const newQty = Math.min(parseInt(nftInfo.totalSupply), quantity + 1);
-                  setQuantity(newQty);
-                  setTotalPrice(calculateTotalPrice(newQty));
-                }}>+</button>
+                <button className="px-3 py-1 text-xl" onClick={handleDecrement}>-</button>
+                <input 
+                  type="number" 
+                  value={quantity} 
+                  onChange={handleQuantityChange} 
+                  className="w-16 text-center text-lg no-spinner" 
+                  min="1"
+                />
+                <button className="px-3 py-1 text-xl" onClick={handleIncrement}>+</button>
               </div>
             </div>
             <div className="flex items-center justify-between mt-4">
@@ -127,12 +183,6 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, event, nft
                 {isPending ? 'Minting...' : `Mint NFT (${nftInfo.price} ETH each)`}
               </Button>
             </div>
-            {hash && <div>Transaction Hash: {hash}</div>}
-            {isConfirming && <div>Waiting for confirmation...</div>}
-            {isConfirmed && <div>Transaction confirmed.</div>}
-            {error && (
-              <div>Error: {(error as BaseError).shortMessage || error.message}</div>
-            )}
           </div>
         </div>
       </DialogContent>

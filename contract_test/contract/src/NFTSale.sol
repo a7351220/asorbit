@@ -23,8 +23,27 @@ contract NFTSale is ERC721, Ownable {
     address[] public participantList;
     uint256 public totalUniqueParticipants;
 
+    // 在合约开始处添加新的状态变量和结构体
+    struct Listing {
+        address seller;
+        uint256 price;
+    }
+
+    mapping(uint256 => Listing) public listings;
+
     event NFTMinted(address buyer, uint256 tokenId);
     event ParticipantAdded(address participant);
+    event NFTListed(
+        uint256 indexed tokenId,
+        address indexed seller,
+        uint256 price
+    );
+    event NFTSold(
+        uint256 indexed tokenId,
+        address indexed seller,
+        address indexed buyer,
+        uint256 price
+    );
 
     constructor(
         string memory name,
@@ -94,5 +113,121 @@ contract NFTSale is ERC721, Ownable {
         uint256 balance = address(this).balance;
         (bool success, ) = payable(owner()).call{value: balance}("");
         require(success, "Transfer failed");
+    }
+
+    // 添加新的函数用于上架NFT
+    function listNFT(uint256 tokenId, uint256 listingPrice) public {
+        require(ownerOf(tokenId) == msg.sender, "You don't own this NFT");
+        require(listings[tokenId].seller == address(0), "NFT already listed");
+
+        approve(address(this), tokenId);
+        listings[tokenId] = Listing(msg.sender, listingPrice);
+
+        emit NFTListed(tokenId, msg.sender, listingPrice);
+    }
+
+    // 添加新的函数用于购买上架的NFT
+    function buyNFT(uint256 tokenId) public payable {
+        Listing memory listing = listings[tokenId];
+        require(listing.seller != address(0), "NFT not listed for sale");
+        require(msg.value >= listing.price, "Insufficient payment");
+
+        address seller = listing.seller;
+        uint256 price = listing.price;
+
+        delete listings[tokenId];
+        _transfer(seller, msg.sender, tokenId);
+
+        payable(seller).transfer(price);
+
+        if (msg.value > price) {
+            payable(msg.sender).transfer(msg.value - price);
+        }
+
+        emit NFTSold(tokenId, seller, msg.sender, price);
+    }
+
+    // 添加新的函数用于取消上架
+    function cancelListing(uint256 tokenId) public {
+        require(listings[tokenId].seller == msg.sender, "Not the seller");
+        delete listings[tokenId];
+    }
+
+    // 添加新的函数用于查看NFT的上架状态
+    function getListing(
+        uint256 tokenId
+    ) public view returns (address seller, uint256 price) {
+        Listing memory listing = listings[tokenId];
+        return (listing.seller, listing.price);
+    }
+
+    // 在合約中添加以下函數
+
+    // 獲取所有上架的NFT
+    function getAllListedNFTs() public view returns (uint256[] memory) {
+        uint256 listedCount = 0;
+        for (uint256 i = 1; i <= _currentTokenId; i++) {
+            if (listings[i].seller != address(0)) {
+                listedCount++;
+            }
+        }
+
+        uint256[] memory listedNFTs = new uint256[](listedCount);
+        uint256 index = 0;
+        for (uint256 i = 1; i <= _currentTokenId; i++) {
+            if (listings[i].seller != address(0)) {
+                listedNFTs[index] = i;
+                index++;
+            }
+        }
+
+        return listedNFTs;
+    }
+
+    // 獲取用戶擁有的NFT
+    function getOwnedNFTs(
+        address owner
+    ) public view returns (uint256[] memory) {
+        uint256 ownedCount = balanceOf(owner);
+        uint256[] memory ownedNFTs = new uint256[](ownedCount);
+        uint256 index = 0;
+        for (uint256 i = 1; i <= _currentTokenId; i++) {
+            if (ownerOf(i) == owner) {
+                ownedNFTs[index] = i;
+                index++;
+            }
+        }
+        return ownedNFTs;
+    }
+
+    // 添加這個新函數來檢查 NFT 是否已經被列出
+    function isListed(uint256 tokenId) public view returns (bool) {
+        return listings[tokenId].seller != address(0);
+    }
+
+    // 修改 getOwnedNFTs 函數，包含一個布爾值來表示是否只返回未列出的 NFT
+    function getOwnedNFTs(
+        address owner,
+        bool onlyUnlisted
+    ) public view returns (uint256[] memory) {
+        uint256 ownedCount = balanceOf(owner);
+        uint256[] memory tempNFTs = new uint256[](ownedCount);
+        uint256 actualCount = 0;
+
+        for (uint256 i = 1; i <= _currentTokenId; i++) {
+            if (ownerOf(i) == owner) {
+                if (!onlyUnlisted || !isListed(i)) {
+                    tempNFTs[actualCount] = i;
+                    actualCount++;
+                }
+            }
+        }
+
+        uint256[] memory ownedNFTs = new uint256[](actualCount);
+        for (uint256 i = 0; i < actualCount; i++) {
+            ownedNFTs[i] = tempNFTs[i];
+        }
+
+        return ownedNFTs;
     }
 }

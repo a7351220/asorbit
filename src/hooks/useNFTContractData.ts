@@ -35,7 +35,6 @@ export function useNFTContractData() {
     ...nftSaleContractConfig,
     functionName: 'getAllParticipants',
   });
-
   const { data: participantInfo } = useReadContract({
     ...nftSaleContractConfig,
     functionName: 'getParticipantInfo',
