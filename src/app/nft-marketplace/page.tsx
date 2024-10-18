@@ -74,6 +74,11 @@ const NFTItem: React.FC<{ nft: ListedNFT; refetch: () => void }> = ({ nft, refet
     hash,
   });
 
+  const { data: saleNFTName } = useReadContract({
+    ...nftSaleContractConfig,
+    functionName: 'name',
+  });
+
   useEffect(() => {
     if (listing) {
       const [seller, price] = listing;
@@ -141,7 +146,7 @@ const NFTItem: React.FC<{ nft: ListedNFT; refetch: () => void }> = ({ nft, refet
           />
         </div>
         <div className="p-2">
-          <p className="font-bold text-sm">Token ID: {nft.tokenId.toString()}</p>
+          <p className="font-bold text-sm">{saleNFTName} #{nft.tokenId.toString()}</p>
           <p className="text-sm text-gray-600">Price: {formatEther(nft.price)} ETH</p>
           <p className="text-sm text-gray-600 truncate">Seller: {nft.seller}</p>
         </div>
