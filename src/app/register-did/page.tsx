@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar';
 import { FaUser, FaEnvelope, FaPhone, FaCopy } from 'react-icons/fa';
 import { useToast } from "@/hooks/use-toast";
 import { useAccount } from 'wagmi';
+import { ethers } from 'ethers';
 
 export default function RegisterDID() {
   const [name, setName] = useState('');
@@ -13,6 +14,7 @@ export default function RegisterDID() {
   const [isGenerated, setIsGenerated] = useState(false);
   const { toast } = useToast();
   const { address } = useAccount();
+  const [wallet, setWallet] = useState<ethers.HDNodeWallet | null>(null);
 
   useEffect(() => {
     if (address) {
@@ -38,12 +40,17 @@ export default function RegisterDID() {
       return;
     }
 
-    const fakeDID = `did:ethr:sepolia:0x${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
-    setDID(fakeDID);
+    // 生成新的 EVM 錢包
+    const newWallet = ethers.Wallet.createRandom();
+    setWallet(newWallet);
+
+    // 使用錢包地址作為 DID
+    const newDID = `did:ethr:sepolia:${newWallet.address}`;
+    setDID(newDID);
     setIsGenerated(true);
 
     const storedDIDs = JSON.parse(localStorage.getItem('userDIDs') || '{}');
-    storedDIDs[address] = fakeDID;
+    storedDIDs[address] = newDID;
     localStorage.setItem('userDIDs', JSON.stringify(storedDIDs));
 
     toast({
@@ -124,6 +131,21 @@ export default function RegisterDID() {
                 <FaCopy />
               </button>
             </div>
+            {wallet && (
+              <>
+                <h3 className="text-lg font-bold mt-6 mb-2 text-blue-900">Wallet Details:</h3>
+                <p className="text-sm text-gray-600 mb-2">
+                  <strong>Public Key:</strong> {wallet.publicKey}
+                </p>
+                <p className="text-sm text-gray-600 mb-4">
+                  <strong>Private Key:</strong> {wallet.privateKey}
+                </p>
+                <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4" role="alert">
+                  <p className="font-bold">Warning</p>
+                  <p>Keep your private key secret. Never share it with anyone.</p>
+                </div>
+              </>
+            )}
             <p className="text-gray-600 mt-4">This is your Decentralized Identifier (DID) on the Sepolia network. You can use this to interact with DID-enabled services and applications.</p>
           </div>
         )}

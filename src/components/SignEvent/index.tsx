@@ -4,13 +4,15 @@ import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import BookingModal from '@/components/BookingModal';
 import { events } from '@/data/event-data';
-import { useNFTContractData } from '@/hooks/useNFTContractData';
 import { useRouter } from 'next/navigation';
 import { useToast } from "@/hooks/use-toast";
-import { useAccount } from 'wagmi';
+import { useAccount, useReadContracts } from 'wagmi';
+import { nftSaleFactoryConfig, nftSaleContractConfig } from '@/app/contracts';
+import { formatEther } from 'viem';
 
 interface ContractEvent {
   id: number;
+  address: `0x${string}`;
   title: string;
   price: string;
   totalSupply: string;
@@ -26,7 +28,23 @@ const SignEvent: React.FC = () => {
   const { toast } = useToast();
   const { address } = useAccount();
 
-  const nftData = useNFTContractData();
+  const { data: nftSalesAddresses } = useReadContracts({
+    contracts: [
+      {
+        ...nftSaleFactoryConfig,
+        functionName: 'getAllNFTSales',
+      },
+    ],
+  });
+
+  const { data: nftSalesData } = useReadContracts({
+    contracts: nftSalesAddresses?.[0]?.result?.flatMap((address: `0x${string}`) => [
+      { address, abi: nftSaleContractConfig.abi, functionName: 'name' },
+      { address, abi: nftSaleContractConfig.abi, functionName: 'price' },
+      { address, abi: nftSaleContractConfig.abi, functionName: 'totalSupply' },
+      { address, abi: nftSaleContractConfig.abi, functionName: 'saleEndTime' },
+    ]) || [],
+  });
 
   useEffect(() => {
     if (address) {
@@ -38,25 +56,23 @@ const SignEvent: React.FC = () => {
   }, [address]);
 
   useEffect(() => {
-    if (nftData.name && nftData.totalSupply && nftData.price && nftData.saleEndTime) {
-      const contractEvent: ContractEvent = {
-        id: 1,
-        title: nftData.name,
-        price: nftData.price,
-        totalSupply: nftData.totalSupply,
-        saleEndTime: nftData.saleEndTime,
-        image: events[0]?.image || ''
-      };
-
-      // 只有當新的事件與當前事件不同時才更新狀態
-      setContractEvents(prevEvents => {
-        if (prevEvents.length === 0 || JSON.stringify(prevEvents[0]) !== JSON.stringify(contractEvent)) {
-          return [contractEvent];
-        }
-        return prevEvents;
+    if (nftSalesAddresses?.[0]?.result && nftSalesData) {
+      const addresses = nftSalesAddresses[0].result as `0x${string}`[];
+      const eventsData = addresses.map((address, index) => {
+        const offset = index * 4;
+        return {
+          id: index,
+          address,
+          title: nftSalesData[offset]?.result as string || 'Unknown',
+          price: nftSalesData[offset + 1]?.result ? formatEther(nftSalesData[offset + 1].result as bigint) : '0',
+          totalSupply: nftSalesData[offset + 2]?.result ? (nftSalesData[offset + 2].result as bigint).toString() : '0',
+          saleEndTime: nftSalesData[offset + 3]?.result ? new Date(Number(nftSalesData[offset + 3].result as bigint) * 1000).toLocaleString() : '',
+          image: events[index % events.length]?.image || '',
+        };
       });
+      setContractEvents(eventsData);
     }
-  }, [nftData.name, nftData.totalSupply, nftData.price, nftData.saleEndTime]);
+  }, [nftSalesAddresses, nftSalesData]);
 
   const handleEventClick = (event: ContractEvent) => {
     if (!hasDID) {
@@ -116,7 +132,6 @@ const SignEvent: React.FC = () => {
           isOpen={!!selectedEvent}
           onClose={handleCloseModal}
           event={selectedEvent}
-          nftInfo={nftData}
         />
       )}
     </section>
