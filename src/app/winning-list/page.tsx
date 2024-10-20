@@ -1,16 +1,31 @@
 'use client';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import WinnerModal from '@/components/WinnerModal';
 import Navbar from '@/components/Navbar';
-import { events, Event } from '@/data/event-data';
-import { getEventStatus, getEventStatusDescription } from '@/lib/event-status';
+import { getEventStatusDescription } from '@/lib/event-status';
 import { useLotteryContractData } from '@/hooks/useLotteryContractData';
 import { useNFTContractData } from '@/hooks/useNFTContractData';
+import { useReadContracts } from 'wagmi';
+import { nftSaleFactoryConfig, nftSaleContractConfig } from '@/app/contracts';
+import { formatEther } from 'viem';
+import { events } from '@/data/event-data';
+
+interface ContractEvent {
+  id: number;
+  address: `0x${string}`;
+  title: string;
+  price: string;
+  totalSupply: string;
+  saleEndTime: string;
+  status: 'upcoming' | 'ongoing' | 'ended' | 'announced' | 'completed';
+  image: string;
+}
 
 const WinningList: React.FC = () => {
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<ContractEvent | null>(null);
+  const [contractEvents, setContractEvents] = useState<ContractEvent[]>([]);
   const { 
     lotteryFinished, 
     isLoading,
@@ -22,24 +37,62 @@ const WinningList: React.FC = () => {
     allParticipants 
   } = useNFTContractData();
 
-  const filteredEvents = useMemo(() => {
-    return events
-      .filter(event => {
-        const status = getEventStatus(event);
-        return status === 'ended' || status === 'announced' || status === 'completed';
-      })
-      .sort((a, b) => {
-        const dateA = new Date(a.winnersAnnouncement || '');
-        const dateB = new Date(b.winnersAnnouncement || '');
-        return dateB.getTime() - dateA.getTime();
+  const { data: nftSalesAddresses } = useReadContracts({
+    contracts: [
+      {
+        ...nftSaleFactoryConfig,
+        functionName: 'getAllNFTSales',
+      },
+    ],
+  });
+
+  const { data: nftSalesData } = useReadContracts({
+    contracts: nftSalesAddresses?.[0]?.result?.flatMap((address: `0x${string}`) => [
+      { address, abi: nftSaleContractConfig.abi, functionName: 'name' },
+      { address, abi: nftSaleContractConfig.abi, functionName: 'price' },
+      { address, abi: nftSaleContractConfig.abi, functionName: 'totalSupply' },
+      { address, abi: nftSaleContractConfig.abi, functionName: 'saleEndTime' },
+    ]) || [],
+  });
+
+  useEffect(() => {
+    if (nftSalesAddresses?.[0]?.result && nftSalesData) {
+      const addresses = nftSalesAddresses[0].result as `0x${string}`[];
+      const eventsData = addresses.map((address, index) => {
+        const offset = index * 4;
+        const currentTime = Date.now();
+        const endTime = Number(nftSalesData[offset + 3]?.result as bigint) * 1000;
+        let status: ContractEvent['status'] = 'ongoing';
+        if (currentTime > endTime) {
+          status = lotteryFinished ? 'announced' : 'ended';
+        } else if (currentTime < endTime) {
+          status = 'upcoming';
+        }
+        return {
+          id: index,
+          address,
+          title: nftSalesData[offset]?.result as string || 'Unknown',
+          price: nftSalesData[offset + 1]?.result ? formatEther(nftSalesData[offset + 1].result as bigint) : '0',
+          totalSupply: nftSalesData[offset + 2]?.result ? (nftSalesData[offset + 2].result as bigint).toString() : '0',
+          saleEndTime: nftSalesData[offset + 3]?.result ? new Date(Number(nftSalesData[offset + 3].result as bigint) * 1000).toLocaleString() : '',
+          status,
+          image: events[index % events.length]?.image || '',
+        };
       });
-  }, []);
-  
-  const handleEventClick = (event: Event) => {
-    const status = getEventStatus(event);
-    if (status === 'ended' || status === 'announced' || status === 'completed') {
-      setSelectedEvent(event);
+      setContractEvents(eventsData);
     }
+  }, [nftSalesAddresses, nftSalesData, lotteryFinished]);
+
+  const filteredEvents = useMemo(() => {
+    return contractEvents.sort((a, b) => {
+      const dateA = new Date(a.saleEndTime);
+      const dateB = new Date(b.saleEndTime);
+      return dateB.getTime() - dateA.getTime();
+    });
+  }, [contractEvents]);
+  
+  const handleEventClick = (event: ContractEvent) => {
+    setSelectedEvent(event);
   };
 
   const handleCloseModal = () => {
@@ -50,27 +103,15 @@ const WinningList: React.FC = () => {
     <div className="bg-white min-h-screen text-black">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center text-blue-900 mb-8">Winning List</h1>
+        <h1 className="text-3xl font-bold text-center text-blue-900 mb-8">Event List</h1>
         {isLoading ? (
-          <p className="text-center">Loading lottery data...</p>
+          <p className="text-center">Loading event data...</p>
         ) : isError ? (
-          <p className="text-center text-red-500">Error loading lottery data. Please try again later.</p>
+          <p className="text-center text-red-500">Error loading event data. Please try again later.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-            {filteredEvents.map((event, index) => {
-              let status = getEventStatus(event);
-              let statusDescription = getEventStatusDescription(status);
-              let participantsCount = event.currentParticipants?.toString() || 'Loading...';
-              let title = event.title;
-              let winnersAnnouncement = event.winnersAnnouncement;
-              
-              if (index === 0) {
-                status = lotteryFinished ? 'announced' : 'ended';
-                statusDescription = getEventStatusDescription(status);
-                participantsCount = allParticipants ? allParticipants.length.toString() : 'Loading...';
-                title = name || 'Loading...';
-                winnersAnnouncement = saleEndTime || 'Loading...';
-              }
+            {filteredEvents.map((event) => {
+              const statusDescription = getEventStatusDescription(event.status);
               
               return (
                 <div 
@@ -92,13 +133,16 @@ const WinningList: React.FC = () => {
                     </div>
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl sm:text-2xl font-bold text-blue-900 mb-2 truncate">{title}</h3>
+                    <h3 className="text-xl sm:text-2xl font-bold text-blue-900 mb-2 truncate">{event.title}</h3>
                     <p className="text-sm sm:text-base text-gray-600 mb-2 font-medium">
-                      Winners Announcement: {winnersAnnouncement}
+                      Sale End: {event.saleEndTime}
                     </p>
                     <div className="flex flex-col space-y-2">
                       <span className="text-sm sm:text-base text-blue-500 font-semibold">
-                        {participantsCount} Participants
+                        Total Supply: {event.totalSupply}
+                      </span>
+                      <span className="text-sm sm:text-base text-blue-500 font-semibold">
+                        Price: {event.price} ETH
                       </span>
                       <Button onClick={(e) => {
                         e.stopPropagation();
@@ -115,7 +159,7 @@ const WinningList: React.FC = () => {
       <WinnerModal
         isOpen={!!selectedEvent}
         onClose={handleCloseModal}
-        event={selectedEvent}
+        event={selectedEvent as any}
       />
     </div>
   );
