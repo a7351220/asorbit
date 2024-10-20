@@ -4,6 +4,9 @@ export interface Event {
   date?: string;
   price: string;
   image: string;
+  contractAddress?: string;
+  totalSupply?: string;
+  saleEndTime?: string;
   fansignDate?: string;
   applicationPeriod?: string;
   availableSlots?: number;
@@ -12,7 +15,6 @@ export interface Event {
   currentParticipants?: number;
   member?: number;
   nftImages?: string[];
-  contractAddress?: string;
   transactionHash?: string;
 }
 

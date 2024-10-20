@@ -124,12 +124,20 @@ export default function Hero() {
         </>
       )}
 
-      <BookingModal
-        isOpen={!!selectedEvent}
-        onClose={handleCloseModal}
-        event={selectedEvent}
-        nftInfo={nftInfo}
-      />
+      {selectedEvent && (
+        <BookingModal
+          isOpen={true}
+          onClose={handleCloseModal}
+          event={{
+            address: selectedEvent.contractAddress as `0x${string}`,
+            title: selectedEvent.title,
+            price: selectedEvent.price,
+            totalSupply: selectedEvent.totalSupply || '0',
+            saleEndTime: selectedEvent.saleEndTime || '',
+            image: selectedEvent.image
+          }}
+        />
+      )}
     </section>
   );
 }

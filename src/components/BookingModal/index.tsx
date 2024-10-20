@@ -48,35 +48,35 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, event }) =
       hash,
     });
 
-  const { data: name } = event ? useReadContract({
-    address: event.address,
+  const { data: name } = useReadContract({
+    address: event?.address,
     abi: nftSaleContractConfig.abi,
     functionName: 'name',
-  }) : { data: null };
+  });
 
-  const { data: symbol } = event ? useReadContract({
-    address: event.address,
+  const { data: symbol } = useReadContract({
+    address: event?.address,
     abi: nftSaleContractConfig.abi,
     functionName: 'symbol',
-  }) : { data: null };
+  });
 
-  const { data: price } = event ? useReadContract({
-    address: event.address,
+  const { data: price } = useReadContract({
+    address: event?.address,
     abi: nftSaleContractConfig.abi,
     functionName: 'price',
-  }) : { data: null };
+  });
 
-  const { data: totalSupply } = event ? useReadContract({
-    address: event.address,
+  const { data: totalSupply } = useReadContract({
+    address: event?.address,
     abi: nftSaleContractConfig.abi,
     functionName: 'totalSupply',
-  }) : { data: null };
+  });
 
-  const { data: allParticipants } = event ? useReadContract({
-    address: event.address,
+  const { data: allParticipants } = useReadContract({
+    address: event?.address,
     abi: nftSaleContractConfig.abi,
     functionName: 'getAllParticipants',
-  }) : { data: null };
+  });
 
   useEffect(() => {
     if (price) {
