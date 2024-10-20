@@ -10,7 +10,7 @@ export function useMintNFTContract() {
     ...mintNFTContractConfig,
     functionName: 'tokensOfOwner',
     args: userAddress ? [userAddress] : undefined,
-  });
+  }) as { data: bigint[] | undefined, isLoading: boolean, refetch: () => void };
 
   useEffect(() => {
     console.log('Owned tokens:', ownedTokens);
@@ -49,14 +49,11 @@ export function useMintNFTContract() {
     functionName: 'symbol',
   });
 
-  // 讀取 NFT 的 URI
-  const getTokenURI = useCallback((tokenId: bigint) => {
-    return useReadContract({
-      ...mintNFTContractConfig,
-      functionName: 'tokenURI',
-      args: [tokenId],
-    });
-  }, []);
+  // 讀取總供應量
+  const { data: totalSupply } = useReadContract({
+    ...mintNFTContractConfig,
+    functionName: 'totalSupply',
+  });
 
   return {
     ownedTokens,
@@ -67,6 +64,6 @@ export function useMintNFTContract() {
     isMinting,
     contractName,
     contractSymbol,
-    getTokenURI,
+    totalSupply,
   };
 }

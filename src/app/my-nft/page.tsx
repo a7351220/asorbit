@@ -85,60 +85,22 @@ const MyNFTPage: React.FC = () => {
     });
   }, []);
 
-  const myNFTs: NFT[] = useMemo(() => {
-    const mintNFTs = ownedTokens 
-      ? ownedTokens.map((tokenId: bigint) => {
-        const id = Number(tokenId)+20;
-          const details = nfts.find(nft => nft.id === id);
-          if (details) {
-            return {
-              ...details,
-              contractAddress: mintNFTContractConfig.address,
-              isWinnerNFT: false,
-              status: details.status || 'active',
-              transactionHash: nftTransactionHashes[Number(id)]
-            };
-          }
-          return null;
-        }).filter((nft): nft is NFT => nft !== null)
-      : [];
-
-    const saleNFTs = participantInfo && participantInfo[2]
-      ? participantInfo[2].map((id: bigint) => ({
-          id: `${salesymbol}${Number(id)}`,
-          image: `/nft-images/unknow.png`,
-          name: `${saleNFTName} #${id.toString()}`,
-          contractAddress: nftSaleContractConfig.address,
-          isWinnerNFT: false,
-          isLimitedEdition: false,
-          group: saleNFTName || '',
-          status: 'active',
-          currentOwner: address || '',
-          price: '0 ETH',
-          rarity: 'Common' as const,
-          transactionHash: nftTransactionHashes[Number(id)]
-        }))
-      : [];
-
-    const lotteryNFT = winnerIndex !== -1
-      ? [{
-          id: winnerIndex + 1,
-          image: `/event/1/event-1.jpg`,
-          name: `Winner NFT #${winnerIndex + 1}`,
-          contractAddress: nftLotteryContractConfig.address,
-          isWinnerNFT: true,
-          isLimitedEdition: isLimitedEditionForWinner ?? false,
-          group: 'Lottery NFT',
-          status: 'active',
-          currentOwner: address || '',
-          price: '0 ETH',
-          rarity: 'Legendary' as const,
-          transactionHash: nftTransactionHashes[winnerIndex + 1]
-        }]
-      : [];
-
-    return [...mintNFTs, ...saleNFTs, ...lotteryNFT];
-  }, [ownedTokens, participantInfo, winnerIndex, saleNFTName, isLimitedEditionForWinner, nftTransactionHashes, address]);
+  const myNFTs: (NFT & { tokenId: string })[] = useMemo(() => {
+    if (!ownedTokens || !Array.isArray(ownedTokens) || ownedTokens.length === 0) {
+      return [];
+    }
+    return ownedTokens.map((tokenId: bigint) => {
+      const id = Number(tokenId) + 20;
+      const details = nfts.find(nft => nft.id === id);
+      if (details) {
+        return {
+          ...details,
+          tokenId: tokenId.toString(),
+        };
+      }
+      return null;
+    }).filter((nft): nft is NFT & { tokenId: string } => nft !== null);
+  }, [ownedTokens]);
 
   useEffect(() => {
     const groups = Array.from(new Set(myNFTs.map(nft => nft.group)));
@@ -446,3 +408,5 @@ const MyNFTPage: React.FC = () => {
 
 export default MyNFTPage;
         
+
+

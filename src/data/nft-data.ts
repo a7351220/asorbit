@@ -6,16 +6,15 @@ export interface NFT {
   image: string;
   rarity: 'Common' | 'Uncommon' | 'Rare' | 'Epic' | 'Legendary';
   description?: string;
-  currentOwner: string;
-  listingDate?: string;
-  expirationDate?: string;
-  status: 'on_market' | 'owned' | 'redeemed' | 'active';
-  tokenId?: string;
-  purchaseDate?: string;
-  contractAddress?: string;
+  status?: 'available' | 'redeemed' | 'on_market' | 'owned';
   isWinnerNFT?: boolean;
   isLimitedEdition?: boolean;
+  tokenId?: string;
   transactionHash?: string;
+  listingDate?: string;
+  expirationDate?: string;
+  currentOwner?: string;
+  purchaseDate?: string;
 }
 
 export const groups: string[] = [
@@ -480,7 +479,7 @@ export const nfts: NFT[] = [
   }
 ];
 
-export const getNFTsByStatus = (status: 'on_market' | 'owned' | 'redeemed') => 
+export const getNFTsByStatus = (status: 'on_market' | 'owned' | 'redeemed' | 'available') => 
   nfts.filter(nft => nft.status === status);
 
 export const getMarketplaceNFTs = () => getNFTsByStatus('on_market');

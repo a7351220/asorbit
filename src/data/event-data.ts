@@ -14,6 +14,8 @@ export interface Event {
   nftImages?: string[];
   contractAddress?: string;
   transactionHash?: string;
+  isDeployed?: boolean;
+  currentOwner?: string;
 }
 
 export const events: Event[] = [

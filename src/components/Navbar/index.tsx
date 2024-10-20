@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import Image from 'next/image';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,7 +17,12 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center">
           <Link href="/" className="flex items-center">
-            <img src="/AsOrbit_logo.png" alt="AsOrbit Logo" className="w-36 sm:w-40 h-auto" />
+            <Image
+              src="/AsOrbit_logo.png"
+              alt="AsOrbit Logo"
+              width={100}
+              height={50}
+            />
           </Link>
           <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
             <Link href="/" className="block text-white hover:text-blue-200 py-2">Sign Event</Link>

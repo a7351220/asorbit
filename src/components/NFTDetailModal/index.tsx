@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import NFTGroupLogo from '@/components/NFTGroupLogo';
+import { NFT } from "@/data/nft-data"; 
 
 interface NFTDetailModalProps {
   nft: NFT | null;

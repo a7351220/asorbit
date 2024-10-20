@@ -172,7 +172,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, event, nft
                 </>
               ) : (
                 <>
-                  <p className="text-yellow-600 font-semibold">This event's contract has not been deployed yet.</p>
+                  <p className="text-yellow-600 font-semibold">This event&apos;s contract has not been deployed yet.</p>
                   <Button 
                     className="bg-gray-400 hover:bg-gray-500 text-lg px-6 py-2 mt-4" 
                     disabled

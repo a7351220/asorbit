@@ -90,7 +90,9 @@ const NFTmarketModal: React.FC<NFTmarketModalProps> = ({ nft, isOpen, onClose, o
                         onClick={toggleAddress}
                         title="Click to toggle full address"
                       >
-                        {showFullAddress ? nft.currentOwner : truncateAddress(nft.currentOwner)}
+                        {nft.currentOwner 
+                          ? (showFullAddress ? nft.currentOwner : truncateAddress(nft.currentOwner))
+                          : 'Unknown'}
                       </p>
                     </div>
                   </div>
