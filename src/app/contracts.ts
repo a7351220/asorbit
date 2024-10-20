@@ -1,7 +1,7 @@
 import { Address } from 'viem'
 export const nftSaleContractConfig = {
 
-    address: '0xF98c6dcbe30Ceac57313a058DA86635DD210eD54',
+    address: '0x4a2B7C45D8929e3863419a4888d30d82AB30efF5',
     abi:[
     {
         "type": "constructor",
@@ -729,7 +729,7 @@ export const nftSaleContractConfig = {
 } as const
 
 export const nftLotteryContractConfig = {
-    "address": "0xF9A6Bc7C7e75AE268C416fb643D3A0426DD35781",
+    "address": "0x0c9d1244f0B1afA2bfaB6170F8ad9C4ceB5Ff7cE",
     "abi": [
       {
         "type": "constructor",
